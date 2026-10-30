@@ -68,8 +68,9 @@ def main() -> int:
     ap_dir = os.environ.get("ART_DIR", "_art")
     fames = load(ap_dir)
     print(f"读入 {len(fames)} 只票")
-    if len(fames) < 10:
-        raise SystemExit("票数太少（<10），先看各 job 的日志")
+    min_codes = int(os.environ.get("MIN_CODES", "10"))
+    if len(fames) < min_codes:
+        raise SystemExit(f"票数太少（<{min_codes}），先看各 job 的日志")
 
     idx = sorted(set.intersection(*[set(d.index) for d in fames.values()]))
     print(f"共同时间戳 {len(idx)} 个（约 {len(idx)/8:.0f} 个交易日）")
