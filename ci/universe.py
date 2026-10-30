@@ -14,6 +14,43 @@ import contextlib
 import io
 
 
+def all_codes(limit: int = 0) -> list[str]:
+    """全部 A 股代码（主板/创业板/科创板），剔除 ST、退市、B 股。
+
+    用 baostock 的 query_all_stock 取某一交易日的全部标的，
+    再用 query_stock_basic 过滤类型。取数较慢（约 1 分钟），只在 plan 阶段跑一次。
+    """
+    import baostock as bs
+    import contextlib
+    import io as _io
+
+    buf = _io.StringIO()
+    out: list[str] = []
+    with contextlib.redirect_stdout(buf):
+        lg = bs.login()
+        if lg.error_code != "0":
+            raise RuntimeError(lg.error_msg)
+        try:
+            rs = bs.query_all_stock(day="2026-10-29")
+            codes = []
+            while rs.error_code == "0" and rs.next():
+                row = rs.get_row_data()
+                code = str(row[0]).split(".")[-1]
+                name = str(row[2]) if len(row) > 2 else ""
+                if not (code.isdigit() and len(code) == 6):
+                    continue
+                if name.startswith(("ST", "*ST")) or "退" in name:
+                    continue
+                if code.startswith(("200", "900", "51", "15", "16", "58")):
+                    continue          # B 股 / 场内基金
+                codes.append(code)
+            codes = sorted(set(codes))
+        finally:
+            bs.logout()
+    out = codes[:limit] if limit else codes
+    return out
+
+
 def hs300_codes(n: int) -> list[str]:
     import baostock as bs
 
@@ -35,6 +72,11 @@ def hs300_codes(n: int) -> list[str]:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--n", type=int, default=100)
+    ap.add_argument("--n", type=int, default=100, help="取前多少只（0=不限）")
+    ap.add_argument("--all", action="store_true", help="全 A 股（剔除 ST/退市/B股/场内基金）")
     a = ap.parse_args()
-    print(",".join(hs300_codes(a.n)))
+    if a.all:
+        codes = all_codes(a.n)
+    else:
+        codes = hs300_codes(a.n)
+    print(",".join(codes))

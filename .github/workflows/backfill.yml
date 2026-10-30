@@ -14,7 +14,7 @@ on:
         required: true
         default: repo
         type: choice
-        options: [repo, hs300]
+        options: [repo, hs300, all]
       n:
         description: "hs300 模式取前多少只"
         required: false
@@ -24,6 +24,26 @@ on:
         description: "只跑这些票（逗号分隔，优先级最高）"
         required: false
         default: ""
+        type: string
+      start:
+        description: "信号取数起点"
+        required: false
+        default: "2020-01-01"
+        type: string
+      end:
+        description: "信号取数终点"
+        required: false
+        default: "2026-10-29"
+        type: string
+      trade_start:
+        description: "组合回测起始（资金曲线从这天开始）"
+        required: false
+        default: "2020-07-01"
+        type: string
+      window:
+        description: "结构分析窗口（根）"
+        required: false
+        default: "3000"
         type: string
 
 permissions:
@@ -47,6 +67,8 @@ jobs:
             CODES="${{ inputs.codes }}"
           elif [ "${{ inputs.universe }}" = "hs300" ]; then
             CODES=$(python ci/universe.py --n ${{ inputs.n }})
+          elif [ "${{ inputs.universe }}" = "all" ]; then
+            CODES=$(python ci/universe.py --all --n ${{ inputs.n }})
           else
             CODES=$(ls data/min30 | sed 's/\.csv\.gz$//' | paste -sd, -)
           fi
@@ -70,7 +92,7 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt baostock
       - name: 生成信号（缺数据时现场取）
-        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }}
+        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --window ${{ inputs.window }}
       - uses: actions/upload-artifact@v4
         with:
           name: sig-${{ inputs.variant }}-${{ matrix.code }}
@@ -104,7 +126,7 @@ jobs:
           merge-multiple: true
           path: signals_parts
       - name: 合并 + 回测
-        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }}
+        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }}
       - uses: actions/upload-artifact@v4
         with:
           name: result-${{ inputs.variant }}
