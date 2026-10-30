@@ -31,6 +31,9 @@ def main() -> int:
         for code in d.get("signals", {}):
             per_code[code] = d
     print(f"读到 {len(files)} 个分片，覆盖 {len(per_code)} 只票：{','.join(sorted(per_code))}")
+    if not per_code:
+        # 静默「成功但 0 条」最危险：上一轮 20 个 job 全绿、结果全是空跑，就是这么漏过去的
+        raise SystemExit("没有读到任何分片：先看各 job 的 log_*.txt，不要相信 job 的绿色状态")
 
     arms = ["naive_known", "naive_t"]
     arms2 = ["A", "B", "C"]
