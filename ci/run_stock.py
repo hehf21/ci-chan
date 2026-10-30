@@ -31,6 +31,8 @@ def main() -> int:
     ap.add_argument("--end", default="2026-10-29")
     ap.add_argument("--window", type=int, default=3000)
     ap.add_argument("--step", type=int, default=1, help="扫描步长（日线建议 5）")
+    ap.add_argument("--require-vol-ratio", type=float, default=0.0,
+                    help="第7/8课量能突破：买点要求近5日均量/前20日均量 >= 该值（0=关）")
     ap.add_argument("--require-daily-up", type=int, default=0,
                     help="区间套：1=只在日线向上时发买点（滚动重算，无未来函数）")
     ap.add_argument("--require-above-ma", type=int, default=0,
@@ -43,7 +45,8 @@ def main() -> int:
         df = SG.generate(a.code, a.freq, a.start, a.end, a.window, verbose=False,
                          require_end_peak=VARIANTS[a.variant],
                          require_above_ma=a.require_above_ma, step=a.step,
-                         require_daily_up=bool(a.require_daily_up))
+                         require_daily_up=bool(a.require_daily_up),
+                         require_vol_ratio=float(a.require_vol_ratio))
     except FileNotFoundError as e:
         # 退市 / 停牌太久 / baostock 无数据的票：写空分片，不让整个矩阵挂掉
         print(f"SKIP {a.code}: {e}")

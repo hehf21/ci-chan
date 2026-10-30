@@ -74,8 +74,13 @@ def buy_hold_benchmark(codes, d0, d1) -> dict:
     data_dir = os.path.join(HERE, "data", "min30")
     rets, used = [], 0
     for c in sorted(set(codes)):
-        path = os.path.join(data_dir, f"{c}.csv.gz")
-        if not os.path.exists(path):
+        path = None
+        for sub in ("min30", "daily", "d", "min5"):
+            cand = os.path.join(HERE, "data", sub, f"{c}.csv.gz")
+            if os.path.exists(cand):
+                path = cand
+                break
+        if path is None:
             continue
         try:
             with gzip.open(path, "rt", encoding="utf-8") as f:

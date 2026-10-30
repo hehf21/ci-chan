@@ -65,6 +65,11 @@ on:
         required: false
         default: "0.30"
         type: string
+      require_vol_ratio:
+        description: "第7/8课量能突破：买点要求量比 >= 该值（0=关）"
+        required: false
+        default: "0"
+        type: string
       require_daily_up:
         description: "区间套：1=只在日线向上时发买点（0=关）"
         required: false
@@ -132,7 +137,7 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt baostock
       - name: 生成信号（缺数据时现场取）
-        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --window ${{ inputs.window }} --freq ${{ inputs.freq }} --step ${{ inputs.step }} --require-daily-up ${{ inputs.require_daily_up }} --require-above-ma ${{ inputs.require_above_ma }}
+        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --window ${{ inputs.window }} --freq ${{ inputs.freq }} --step ${{ inputs.step }} --require-daily-up ${{ inputs.require_daily_up }} --require-vol-ratio ${{ inputs.require_vol_ratio }} --require-above-ma ${{ inputs.require_above_ma }}
       - uses: actions/upload-artifact@v4
         with:
           name: sig-${{ inputs.variant }}-${{ matrix.code }}
@@ -143,7 +148,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: data-${{ matrix.code }}
-          path: data/min30/${{ matrix.code }}.csv.gz
+          path: data/**/${{ matrix.code }}.csv.gz
           if-no-files-found: ignore
 
   merge:
