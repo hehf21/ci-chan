@@ -25,6 +25,11 @@ on:
         required: false
         default: ""
         type: string
+      freq:
+        description: "周期：30=30分钟 / d=日线"
+        required: false
+        default: "30"
+        type: string
       start:
         description: "信号取数起点"
         required: false
@@ -117,7 +122,7 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt baostock
       - name: 生成信号（缺数据时现场取）
-        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --window ${{ inputs.window }} --require-above-ma ${{ inputs.require_above_ma }}
+        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --window ${{ inputs.window }} --freq ${{ inputs.freq }} --require-above-ma ${{ inputs.require_above_ma }}
       - uses: actions/upload-artifact@v4
         with:
           name: sig-${{ inputs.variant }}-${{ matrix.code }}
@@ -154,7 +159,7 @@ jobs:
           merge-multiple: true
           path: signals_parts
       - name: 合并 + 回测
-        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }} --max-positions ${{ inputs.max_positions }} --max-weight ${{ inputs.max_weight }} ${{ inputs.only_first_zs == 'true' && '--only-first-zs' || '' }} --kinds "${{ inputs.kinds }}"
+        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }} --freq ${{ inputs.freq }} --max-positions ${{ inputs.max_positions }} --max-weight ${{ inputs.max_weight }} ${{ inputs.only_first_zs == 'true' && '--only-first-zs' || '' }} --kinds "${{ inputs.kinds }}"
       - uses: actions/upload-artifact@v4
         with:
           name: result-${{ inputs.variant }}-mp${{ inputs.max_positions }}-zs${{ inputs.only_first_zs }}-ma${{ inputs.require_above_ma }}-${{ inputs.kinds }}

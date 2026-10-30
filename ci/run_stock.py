@@ -26,6 +26,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--code", required=True)
     ap.add_argument("--variant", default="ep1", choices=sorted(VARIANTS))
+    ap.add_argument("--freq", default="30", help="30=30分钟 / d=日线")
     ap.add_argument("--start", default="2020-01-01")
     ap.add_argument("--end", default="2026-10-29")
     ap.add_argument("--window", type=int, default=3000)
@@ -36,7 +37,7 @@ def main() -> int:
     out_dir = os.path.join(HERE, "signals_parts")
     os.makedirs(out_dir, exist_ok=True)
     try:
-        df = SG.generate(a.code, "30", a.start, a.end, a.window, verbose=False,
+        df = SG.generate(a.code, a.freq, a.start, a.end, a.window, verbose=False,
                          require_end_peak=VARIANTS[a.variant],
                          require_above_ma=a.require_above_ma)
     except FileNotFoundError as e:

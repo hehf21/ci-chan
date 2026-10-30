@@ -46,6 +46,8 @@ def load_bars(code: str, freq: str, start: str, end: str) -> pd.DataFrame | None
     if str(freq) == "5":
         import chan_min5
         return chan_min5.get_min5(code, start, end)
+    if str(freq) in ("d", "day", "daily"):
+        return chan_data.get_daily(code, start, end)
     return chan_data.get_min30(code, start, end)
 
 

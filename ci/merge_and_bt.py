@@ -101,6 +101,7 @@ def buy_hold_benchmark(codes, d0, d1) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--variant", default="ep1", choices=["ep0", "ep1"])
+    ap.add_argument("--freq", default="30", help="30=30分钟 / d=日线（须与信号一致）")
     ap.add_argument("--start", default="2020-01-01")
     ap.add_argument("--end", default="2026-10-29")
     ap.add_argument("--trade-start", default="2020-07-01")
@@ -145,7 +146,7 @@ def main() -> int:
     cfg = dict(BASE_CFG)
     cfg["max_positions"] = a.max_positions
     cfg["max_weight_per_stock"] = a.max_weight
-    res = PB.run(sig, "30", a.start, a.end, 1_000_000.0, cfg=cfg, trade_start=a.trade_start)
+    res = PB.run(sig, a.freq, a.start, a.end, 1_000_000.0, cfg=cfg, trade_start=a.trade_start)
     eq, tr = res["equity"], res["trades"]
     eq["date"] = pd.to_datetime(eq["date"])
     if not tr.empty:
