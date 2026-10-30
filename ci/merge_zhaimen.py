@@ -102,7 +102,7 @@ def main() -> int:
         a, seg = agg["all"], agg
         L.append(f"| {key} | {_pct(seg['all']['ret_mean'])} | {_pct(seg['is']['ret_mean'])} | "
                  f"{_pct(seg['oos']['ret_mean'])} | {_pct(seg['all']['mdd_mean'])} | "
-                 f"{seg['all']['rounds_mean']:.1f} | {_pct(seg['all']['win_mean'])} | {seg['all']['gate_blocked']} |")
+                 f"{_num(seg['all']['rounds_mean'])} | {_pct(seg['all']['win_mean'])} | {seg['all']['gate_blocked']} |")
     L.append("")
     L.append("## 基准（同池等权买入持有）")
     L.append("")
@@ -128,6 +128,10 @@ def _median(xs):
 
 def _pct(x):
     return "—" if x is None else f"{x:+.2%}"
+
+
+def _num(x, nd=1):
+    return "—" if x is None else f"{x:.{nd}f}"
 
 
 if __name__ == "__main__":

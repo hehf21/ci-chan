@@ -39,6 +39,8 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)              # CI：仓库根目录（chan_law.py / verify_real.py 都在这）
+PROG = ROOT          # 下游有代码用 PROG 取 chan_law.py 的 mtime 做缓存键，保留这个名字
+STRAT = ROOT
 for _p in (ROOT, HERE):
     if _p not in sys.path:
         sys.path.insert(0, _p)
