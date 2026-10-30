@@ -9,8 +9,19 @@ on:
         default: ep1
         type: choice
         options: [ep0, ep1]
+      universe:
+        description: "股票池：repo=仓库里已有的数据 / hs300=现取沪深300前N只"
+        required: true
+        default: repo
+        type: choice
+        options: [repo, hs300]
+      n:
+        description: "hs300 模式取前多少只"
+        required: false
+        default: "100"
+        type: string
       codes:
-        description: "只跑这些票（逗号分隔，留空=全部）"
+        description: "只跑这些票（逗号分隔，优先级最高）"
         required: false
         default: ""
         type: string
@@ -25,10 +36,17 @@ jobs:
       matrix: ${{ steps.m.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
       - id: m
         run: |
+          set -e
           if [ -n "${{ inputs.codes }}" ]; then
             CODES="${{ inputs.codes }}"
+          elif [ "${{ inputs.universe }}" = "hs300" ]; then
+            CODES=$(python ci/universe.py --n ${{ inputs.n }})
           else
             CODES=$(ls data/min30 | sed 's/\.csv\.gz$//' | paste -sd, -)
           fi
@@ -39,6 +57,7 @@ jobs:
   gen:
     needs: plan
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       max-parallel: 20
@@ -49,8 +68,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -r requirements.txt
-      - name: 生成信号
+      - run: pip install -r requirements.txt baostock
+      - name: 生成信号（缺数据时现场取）
         run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }}
       - uses: actions/upload-artifact@v4
         with:
@@ -66,7 +85,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -r requirements.txt
+      - run: pip install -r requirements.txt baostock
       - uses: actions/download-artifact@v4
         with:
           pattern: sig-${{ inputs.variant }}-*
