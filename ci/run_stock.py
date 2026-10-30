@@ -39,6 +39,19 @@ def main() -> int:
                     help="第8课能搞：只在收盘站上 N 日线时发买点（0=关）")
     a = ap.parse_args()
 
+    # 日线模式把行情存一份到 data/daily，供 merge 的基准复用（避免它重新取数）
+    if str(a.freq) in ("d", "day", "daily"):
+        try:
+            import chan_data as _cd
+            _d = _cd.get_daily(a.code, a.start, a.end)
+            if _d is not None and len(_d):
+                _dd = os.path.join(HERE, "data", "daily")
+                os.makedirs(_dd, exist_ok=True)
+                _d.to_csv(os.path.join(_dd, f"{a.code}.csv.gz"), index=False,
+                          encoding="utf-8", compression="gzip")
+        except Exception as _e:
+            print(f"daily cache skip {a.code}: {_e}")
+
     out_dir = os.path.join(HERE, "signals_parts")
     os.makedirs(out_dir, exist_ok=True)
     try:

@@ -148,7 +148,13 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: data-${{ matrix.code }}
-          path: data/**/${{ matrix.code }}.csv.gz
+          path: data/min30/${{ matrix.code }}.csv.gz
+          if-no-files-found: ignore
+      # 日线跑的时候另存一份，merge 的基准会去 data/daily 找（2026-10-31 修）
+      - uses: actions/upload-artifact@v4
+        with:
+          name: daily-${{ matrix.code }}
+          path: data/daily/${{ matrix.code }}.csv.gz
           if-no-files-found: ignore
 
   merge:
