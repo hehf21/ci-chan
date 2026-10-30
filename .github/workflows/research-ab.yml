@@ -93,6 +93,7 @@ jobs:
           path: |
             signals_parts/
             zs_parts/
+            data/min30/${{ matrix.code }}.csv.gz
             log_${{ matrix.code }}.txt
           if-no-files-found: warn
 
