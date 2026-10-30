@@ -5,3 +5,7 @@ signals/
 signals_parts/
 out/
 *.log
+
+_dl/
+_res/
+_dl_*/
