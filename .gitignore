@@ -9,3 +9,8 @@ out/
 _dl/
 _res/
 _dl_*/
+_art*/
+_dl*/
+ci/_out/
+ci/汇总-闸门.*
+*.log

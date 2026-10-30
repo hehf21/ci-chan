@@ -35,7 +35,7 @@ def main() -> int:
         # 静默「成功但 0 条」最危险：上一轮 20 个 job 全绿、结果全是空跑，就是这么漏过去的
         raise SystemExit("没有读到任何分片：先看各 job 的 log_*.txt，不要相信 job 的绿色状态")
 
-    arms = ["naive_known", "naive_t"]
+    arms = ["walkforward", "naive_known", "naive_t"]
     arms2 = ["A", "B", "C"]
     rows = {}
     for a in arms:
@@ -114,8 +114,9 @@ def main() -> int:
     L.append("")
     L.append(f"## 自检：身份恒等式/ T+1 / 止损高于成交价的违规项 {checks_bad} 处（应为 0）")
     L.append("")
-    L.append("口径提醒：`naive_known` = 按 known_t 进场（可执行口径）；`naive_t` = 按价格时点 t 进场"
-             "（含未来函数，只能用来量化偏差，不能当结论）。walk-forward 未在本轮矩阵里跑。")
+    L.append("口径提醒：`walkforward` = 决策点滚动重算（**唯一可作主口径**）；"
+             "`naive_known` = 全量结构 + known_t 进场（结构可能被后续数据改写，偏乐观）；"
+             "`naive_t` = 按价格时点 t 进场（含未来函数，只能用来量化偏差，不能当结论）。")
     mp = os.path.join(args.outdir, "汇总-闸门.md")
     with open(mp, "w", encoding="utf-8") as fh:
         fh.write("\n".join(L) + "\n")
