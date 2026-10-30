@@ -33,9 +33,20 @@ def main() -> int:
 
     out_dir = os.path.join(HERE, "signals_parts")
     os.makedirs(out_dir, exist_ok=True)
-    df = SG.generate(a.code, "30", a.start, a.end, a.window, verbose=False,
-                     require_end_peak=VARIANTS[a.variant])
+    try:
+        df = SG.generate(a.code, "30", a.start, a.end, a.window, verbose=False,
+                         require_end_peak=VARIANTS[a.variant])
+    except FileNotFoundError as e:
+        # 退市 / 停牌太久 / baostock 无数据的票：写空分片，不让整个矩阵挂掉
+        print(f"SKIP {a.code}: {e}")
+        df = None
     path = os.path.join(out_dir, f"{a.variant}_{a.code}.csv")
+    if df is None or df.empty:
+        # 空分片也要写，merge 时统一跳过
+        with open(path, "w", encoding="utf-8-sig") as f:
+            f.write("ts,code,freq,kind,px,stop\n")
+        print(f"{a.code} 无信号（无数据或结构不足） -> {path}")
+        return 0
     df.to_csv(path, index=False, encoding="utf-8-sig")
     print(f"{a.code} variant={a.variant} signals={len(df)} -> {path}")
     return 0

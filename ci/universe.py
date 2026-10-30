@@ -44,7 +44,21 @@ def all_codes(limit: int = 0) -> list[str]:
                 if code.startswith(("200", "900", "51", "15", "16", "58")):
                     continue          # B 股 / 场内基金
                 codes.append(code)
-            codes = sorted(set(codes))
+            # 再用 stock_basic 过滤：type=1(股票) 且 status=1(上市)
+            valid = []
+            for code in sorted(set(codes)):
+                prefix = "sh." if code.startswith(("6", "9")) else "sz."
+                rs2 = bs.query_stock_basic(code=prefix + code)
+                row2 = rs2.get_row_data() if rs2.next() else None
+                if not row2:
+                    continue
+                try:
+                    t, st = int(row2[4]), int(row2[5])
+                except Exception:
+                    continue
+                if t == 1 and st == 1:
+                    valid.append(code)
+            codes = valid
         finally:
             bs.logout()
     out = codes[:limit] if limit else codes
