@@ -65,6 +65,11 @@ on:
         required: false
         default: "0.30"
         type: string
+      require_daily_up:
+        description: "区间套：1=只在日线向上时发买点（0=关）"
+        required: false
+        default: "0"
+        type: string
       require_above_ma:
         description: "第8课能搞：站上 N 日线才发买点（0=关，250=年线）"
         required: false
@@ -127,7 +132,7 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt baostock
       - name: 生成信号（缺数据时现场取）
-        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --window ${{ inputs.window }} --freq ${{ inputs.freq }} --step ${{ inputs.step }} --require-above-ma ${{ inputs.require_above_ma }}
+        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --window ${{ inputs.window }} --freq ${{ inputs.freq }} --step ${{ inputs.step }} --require-daily-up ${{ inputs.require_daily_up }} --require-above-ma ${{ inputs.require_above_ma }}
       - uses: actions/upload-artifact@v4
         with:
           name: sig-${{ inputs.variant }}-${{ matrix.code }}
@@ -167,7 +172,7 @@ jobs:
         run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }} --freq ${{ inputs.freq }} --max-positions ${{ inputs.max_positions }} --max-weight ${{ inputs.max_weight }} ${{ inputs.only_first_zs == 'true' && '--only-first-zs' || '' }} --kinds "${{ inputs.kinds }}"
       - uses: actions/upload-artifact@v4
         with:
-          name: result-${{ inputs.variant }}-mp${{ inputs.max_positions }}-zs${{ inputs.only_first_zs }}-ma${{ inputs.require_above_ma }}-${{ inputs.kinds }}
+          name: result-${{ inputs.variant }}-mp${{ inputs.max_positions }}-zs${{ inputs.only_first_zs }}-ma${{ inputs.require_above_ma }}-nest${{ inputs.require_daily_up }}-${{ inputs.kinds }}
           path: |
             out/ci_*.json
             out/ci_*_equity.csv

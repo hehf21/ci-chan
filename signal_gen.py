@@ -55,11 +55,16 @@ def generate(code: str, freq: str, start: str, end: str, window: int,
              min_bars: int = 800, verbose: bool = True,
              max_age_bars: int = 40,
              require_end_peak: bool = False, allow_panzheng_b1: bool = False,
-             require_above_ma: int = 0, step: int = 1) -> pd.DataFrame:
+             require_above_ma: int = 0, step: int = 1,
+             require_daily_up: bool = False, daily_step_bars: int = 20,
+             daily_window: int = 800) -> pd.DataFrame:
     """对一只票逐 bar 扫结构，输出首次出现的买卖点。
 
     require_end_peak   : 工程增补 —— 笔端点须为区间极值（对齐 chan.py 口径，默认关）
     allow_panzheng_b1  : 口径开关 —— 一类买卖点是否接受盘整背驰（对应 chan.py 的 1p，默认关）
+    require_daily_up   : 区间套（第 27/17 课）——只在**日线级别向上**时发买点。
+                         日线状态用日线线段方向判定（比 MA250 更贴结构），
+                         且**每 daily_step_bars 根 30 分钟 bar 重算一次**，避免用未来数据。
     step               : 扫描步长（根）。日线级别用 5，避免逐根重算 2500 根窗口。
                          30 分钟级别保持 1（信号粒度就是 bar）。
     require_above_ma   : 第 8 课「能搞」标准 —— 只在收盘价站上 N 日线时才发买点。
@@ -85,6 +90,37 @@ def generate(code: str, freq: str, start: str, end: str, window: int,
         _df = _df.reindex(bars["date"], method="ffill")     # 按 bar 时间对齐
         ma_series = _df.reset_index(drop=True)
 
+    # ---- 区间套：日线级别的方向状态（滚动重算，无未来函数）----
+    daily_state = None
+    if require_daily_up:
+        try:
+            _dd = chan_data.get_daily(code, start, end)
+            _dd = _dd.copy()
+            _dd["date"] = pd.to_datetime(_dd["date"])
+            _dd = _dd.sort_values("date").reset_index(drop=True)
+        except Exception:
+            _dd = None
+        if _dd is not None and len(_dd) > 200:
+            _ohlc_d = _dd[["open", "high", "low", "close"]]
+            # 对每根 30 分钟 bar 找它对应的日线可见数据末尾位置
+            _dpos = _dd["date"].searchsorted(bars["date"], side="right")
+            daily_state = [None] * len(bars)
+            _last_dir = 0
+            for _i in range(min_bars, len(bars)):
+                _k = int(_dpos[_i])
+                # 每 daily_step_bars 根重算一次，取「当时可见」的日线窗口
+                if _i == min_bars or (_i - min_bars) % max(1, int(daily_step_bars)) == 0:
+                    if _k >= 200:
+                        _lo = max(0, _k - int(daily_window))
+                        _w = _ohlc_d.iloc[_lo:_k].reset_index(drop=True)
+                        try:
+                            _r = PL.analyze(_w, max_level=1)
+                            _segs = _r.get("segs") or []
+                            _last_dir = int(_segs[-1]["dir"]) if _segs else 0
+                        except Exception:
+                            pass
+                daily_state[_i] = _last_dir
+
     seen: set = set()
     rows: list[dict] = []
     t0 = time.time()
@@ -107,6 +143,10 @@ def generate(code: str, freq: str, start: str, end: str, window: int,
             k = (p["kind"], lo + int(p["raw"]), round(float(p["px"]), 4))
             if k in seen:
                 continue
+            # 区间套：买点要求日线级别此刻向上；卖点一律照发
+            if daily_state is not None and str(p["kind"]).startswith("B"):
+                if int(daily_state[i] or 0) <= 0:
+                    continue
             # 第 8 课：买点要求已站上 N 日线；卖点一律照发
             if ma_series is not None and str(p["kind"]).startswith("B"):
                 try:
