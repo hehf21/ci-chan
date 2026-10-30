@@ -1,0 +1,102 @@
+name: pvfactor
+
+# 价量因子截面选股：动量/反转/波动/换手/量能
+# plan 出股票池 → calc 每票算因子（矩阵并行）→ analyze 月度调仓回测 + 因子 IC
+
+on:
+  workflow_dispatch:
+    inputs:
+      n:
+        description: "抽多少只票"
+        required: false
+        default: "300"
+        type: string
+      top:
+        description: "每月买入前多少只"
+        required: false
+        default: "30"
+        type: string
+      start:
+        description: "取数起点"
+        required: false
+        default: "2017-01-01"
+        type: string
+      end:
+        description: "取数终点"
+        required: false
+        default: "2026-10-30"
+        type: string
+      bt_start:
+        description: "回测起点"
+        required: false
+        default: "2020-01-01"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - id: m
+        run: |
+          set -e
+          CODES=$(python ci/universe.py --all --n ${{ inputs.n }})
+          echo "count=$(echo "$CODES" | tr ',' '\n' | wc -l)"
+          echo "matrix=$(python3 -c "import json,sys;print(json.dumps([c for c in sys.argv[1].split(',') if c]))" "$CODES")" >> "$GITHUB_OUTPUT"
+
+  calc:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        code: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - name: 因子（${{ matrix.code }}）
+        run: |
+          python ci/pv_one.py --code ${{ matrix.code }} --start ${{ inputs.start }} \
+            --end ${{ inputs.end }} --outdir pv_parts || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pv-${{ matrix.code }}
+          path: pv_parts/${{ matrix.code }}.csv
+          if-no-files-found: ignore
+
+  analyze:
+    needs: calc
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pv-*
+          merge-multiple: true
+          path: pv_parts
+      - name: 截面回测
+        run: python ci/pv_merge.py --top ${{ inputs.top }} --bt-start ${{ inputs.bt_start }} --end ${{ inputs.end }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pv-result
+          path: out/pv_*.json
+          if-no-files-found: error

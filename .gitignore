@@ -14,3 +14,6 @@ _dl*/
 ci/_out/
 ci/汇总-闸门.*
 *.log
+
+pv_parts/
+zs_parts/
