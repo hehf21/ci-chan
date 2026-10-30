@@ -118,6 +118,9 @@ jobs:
 
   merge:
     needs: gen
+    # 个别票取数失败不该让整轮没有结果：always() 让 merge 照常跑，
+    # artifact 只拉成功的那部分（2026-10-30 实测 4 只票失败导致 merge 被 skip）。
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

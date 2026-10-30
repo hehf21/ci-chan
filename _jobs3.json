@@ -1,0 +1,3173 @@
+{
+  "total_count": 81,
+  "jobs": [
+    {
+      "id": 124079405311,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47V4_w",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079405311",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079405311",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:02Z",
+      "started_at": "2026-10-30T13:08:04Z",
+      "completed_at": "2026-10-30T13:08:10Z",
+      "name": "plan",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:05Z",
+          "completed_at": "2026-10-30T13:08:05Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:05Z",
+          "completed_at": "2026-10-30T13:08:07Z"
+        },
+        {
+          "name": "Run set -e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:07Z",
+          "completed_at": "2026-10-30T13:08:07Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:08:07Z",
+          "completed_at": "2026-10-30T13:08:07Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:08:07Z",
+          "completed_at": "2026-10-30T13:08:07Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079405311",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001194,
+      "runner_name": "GitHub Actions 1000001194",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079469905,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z1UQ",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079469905",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079469905",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:12Z",
+      "completed_at": "2026-10-30T13:11:56Z",
+      "name": "calc (000425)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:13Z",
+          "completed_at": "2026-10-30T13:08:14Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:14Z",
+          "completed_at": "2026-10-30T13:08:15Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:15Z",
+          "completed_at": "2026-10-30T13:08:15Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:15Z",
+          "completed_at": "2026-10-30T13:08:23Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:23Z",
+          "completed_at": "2026-10-30T13:11:31Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:11:31Z",
+          "completed_at": "2026-10-30T13:11:51Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:11:51Z",
+          "completed_at": "2026-10-30T13:11:53Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:11:53Z",
+          "completed_at": "2026-10-30T13:11:53Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:11:53Z",
+          "completed_at": "2026-10-30T13:11:53Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:11:53Z",
+          "completed_at": "2026-10-30T13:11:54Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079469905",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001197,
+      "runner_name": "GitHub Actions 1000001197",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079469929,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z1aQ",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079469929",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079469929",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:13Z",
+      "completed_at": "2026-10-30T13:11:58Z",
+      "name": "calc (000656)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:13Z",
+          "completed_at": "2026-10-30T13:08:14Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:14Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:27Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:27Z",
+          "completed_at": "2026-10-30T13:11:31Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:11:31Z",
+          "completed_at": "2026-10-30T13:11:54Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:11:54Z",
+          "completed_at": "2026-10-30T13:11:56Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:11:56Z",
+          "completed_at": "2026-10-30T13:11:56Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:11:56Z",
+          "completed_at": "2026-10-30T13:11:56Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:11:56Z",
+          "completed_at": "2026-10-30T13:11:56Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079469929",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001196,
+      "runner_name": "GitHub Actions 1000001196",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079469949,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z1fQ",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079469949",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079469949",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:13Z",
+      "completed_at": "2026-10-30T13:11:56Z",
+      "name": "calc (000898)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:14Z",
+          "completed_at": "2026-10-30T13:08:15Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:15Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:27Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:27Z",
+          "completed_at": "2026-10-30T13:11:30Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:11:30Z",
+          "completed_at": "2026-10-30T13:11:51Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:11:51Z",
+          "completed_at": "2026-10-30T13:11:53Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:11:53Z",
+          "completed_at": "2026-10-30T13:11:53Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:11:53Z",
+          "completed_at": "2026-10-30T13:11:53Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:11:53Z",
+          "completed_at": "2026-10-30T13:11:53Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079469949",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001200,
+      "runner_name": "GitHub Actions 1000001200",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079469953,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z1gQ",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079469953",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079469953",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:13:01Z",
+      "completed_at": null,
+      "name": "calc (002120)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:13:02Z",
+          "completed_at": "2026-10-30T13:13:03Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:13:03Z",
+          "completed_at": "2026-10-30T13:13:05Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:13:05Z",
+          "completed_at": "2026-10-30T13:13:05Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:13:05Z",
+          "completed_at": "2026-10-30T13:13:13Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 5,
+          "started_at": "2026-10-30T13:13:13Z",
+          "completed_at": null
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "pending",
+          "conclusion": null,
+          "number": 6,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "pending",
+          "conclusion": null,
+          "number": 7,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "pending",
+          "conclusion": null,
+          "number": 13,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "pending",
+          "conclusion": null,
+          "number": 14,
+          "started_at": null,
+          "completed_at": null
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079469953",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001235,
+      "runner_name": "GitHub Actions 1000001235",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079469993,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z1qQ",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079469993",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079469993",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:13Z",
+      "completed_at": "2026-10-30T13:12:34Z",
+      "name": "calc (000728)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:13Z",
+          "completed_at": "2026-10-30T13:08:14Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:14Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:26Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:26Z",
+          "completed_at": "2026-10-30T13:12:03Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:12:03Z",
+          "completed_at": "2026-10-30T13:12:31Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:12:31Z",
+          "completed_at": "2026-10-30T13:12:32Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:12:32Z",
+          "completed_at": "2026-10-30T13:12:32Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:12:32Z",
+          "completed_at": "2026-10-30T13:12:33Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:12:33Z",
+          "completed_at": "2026-10-30T13:12:33Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079469993",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001195,
+      "runner_name": "GitHub Actions 1000001195",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470028,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z1zA",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470028",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470028",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:13Z",
+      "completed_at": "2026-10-30T13:12:25Z",
+      "name": "calc (000703)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:13Z",
+          "completed_at": "2026-10-30T13:08:14Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:14Z",
+          "completed_at": "2026-10-30T13:08:15Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:15Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:25Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:25Z",
+          "completed_at": "2026-10-30T13:11:53Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:11:53Z",
+          "completed_at": "2026-10-30T13:12:21Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:12:21Z",
+          "completed_at": "2026-10-30T13:12:23Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:12:23Z",
+          "completed_at": "2026-10-30T13:12:23Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:12:23Z",
+          "completed_at": "2026-10-30T13:12:23Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:12:23Z",
+          "completed_at": "2026-10-30T13:12:23Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470028",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001201,
+      "runner_name": "GitHub Actions 1000001201",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470030,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z1zg",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470030",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470030",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:18Z",
+      "completed_at": "2026-10-30T13:12:48Z",
+      "name": "calc (000661)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:18Z",
+          "completed_at": "2026-10-30T13:08:19Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:19Z",
+          "completed_at": "2026-10-30T13:08:21Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:21Z",
+          "completed_at": "2026-10-30T13:08:21Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:21Z",
+          "completed_at": "2026-10-30T13:08:30Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:30Z",
+          "completed_at": "2026-10-30T13:12:16Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:12:16Z",
+          "completed_at": "2026-10-30T13:12:44Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:12:44Z",
+          "completed_at": "2026-10-30T13:12:46Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:12:46Z",
+          "completed_at": "2026-10-30T13:12:46Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:12:46Z",
+          "completed_at": "2026-10-30T13:12:47Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:12:47Z",
+          "completed_at": "2026-10-30T13:12:47Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470030",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001198,
+      "runner_name": "GitHub Actions 1000001198",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470032,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z10A",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470032",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470032",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:13:42Z",
+      "completed_at": "2026-10-30T13:15:31Z",
+      "name": "calc (002410)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:13:42Z",
+          "completed_at": "2026-10-30T13:13:43Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:13:43Z",
+          "completed_at": "2026-10-30T13:13:45Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:13:45Z",
+          "completed_at": "2026-10-30T13:13:45Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:13:45Z",
+          "completed_at": "2026-10-30T13:13:54Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:13:54Z",
+          "completed_at": "2026-10-30T13:15:21Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:15:21Z",
+          "completed_at": "2026-10-30T13:15:27Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:15:27Z",
+          "completed_at": "2026-10-30T13:15:29Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:15:29Z",
+          "completed_at": "2026-10-30T13:15:29Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:15:29Z",
+          "completed_at": "2026-10-30T13:15:29Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:15:29Z",
+          "completed_at": "2026-10-30T13:15:29Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470032",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001241,
+      "runner_name": "GitHub Actions 1000001241",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470041,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z12Q",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470041",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470041",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:13Z",
+      "completed_at": "2026-10-30T13:12:56Z",
+      "name": "calc (002001)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:14Z",
+          "completed_at": "2026-10-30T13:08:15Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:15Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:26Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:26Z",
+          "completed_at": "2026-10-30T13:12:17Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:12:17Z",
+          "completed_at": "2026-10-30T13:12:51Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:12:51Z",
+          "completed_at": "2026-10-30T13:12:53Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:12:53Z",
+          "completed_at": "2026-10-30T13:12:53Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:12:53Z",
+          "completed_at": "2026-10-30T13:12:53Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:12:53Z",
+          "completed_at": "2026-10-30T13:12:53Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470041",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001202,
+      "runner_name": "GitHub Actions 1000001202",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470076,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z1_A",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470076",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470076",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:13:13Z",
+      "completed_at": null,
+      "name": "calc (002146)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:13:14Z",
+          "completed_at": "2026-10-30T13:13:15Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:13:15Z",
+          "completed_at": "2026-10-30T13:13:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:13:16Z",
+          "completed_at": "2026-10-30T13:13:17Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:13:17Z",
+          "completed_at": "2026-10-30T13:13:27Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 5,
+          "started_at": "2026-10-30T13:13:27Z",
+          "completed_at": null
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "pending",
+          "conclusion": null,
+          "number": 6,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "pending",
+          "conclusion": null,
+          "number": 7,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "pending",
+          "conclusion": null,
+          "number": 13,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "pending",
+          "conclusion": null,
+          "number": 14,
+          "started_at": null,
+          "completed_at": null
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470076",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001238,
+      "runner_name": "GitHub Actions 1000001238",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470079,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z1_w",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470079",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470079",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:14:19Z",
+      "completed_at": "2026-10-30T13:15:06Z",
+      "name": "calc (002466)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:14:19Z",
+          "completed_at": "2026-10-30T13:14:20Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:14:20Z",
+          "completed_at": "2026-10-30T13:14:21Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:14:21Z",
+          "completed_at": "2026-10-30T13:14:22Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:14:22Z",
+          "completed_at": "2026-10-30T13:14:30Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:14:30Z",
+          "completed_at": "2026-10-30T13:15:02Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:15:02Z",
+          "completed_at": "2026-10-30T13:15:03Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:15:03Z",
+          "completed_at": "2026-10-30T13:15:04Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:15:04Z",
+          "completed_at": "2026-10-30T13:15:04Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:15:04Z",
+          "completed_at": "2026-10-30T13:15:04Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:15:04Z",
+          "completed_at": "2026-10-30T13:15:04Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470079",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001245,
+      "runner_name": "GitHub Actions 1000001245",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470127,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z2Lw",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470127",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470127",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:13Z",
+      "completed_at": "2026-10-30T13:11:01Z",
+      "name": "calc (000651)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:13Z",
+          "completed_at": "2026-10-30T13:08:14Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:14Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:25Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:25Z",
+          "completed_at": "2026-10-30T13:10:23Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:10:23Z",
+          "completed_at": "2026-10-30T13:10:57Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:10:57Z",
+          "completed_at": "2026-10-30T13:10:59Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:10:59Z",
+          "completed_at": "2026-10-30T13:10:59Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:10:59Z",
+          "completed_at": "2026-10-30T13:10:59Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:10:59Z",
+          "completed_at": "2026-10-30T13:10:59Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470127",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001203,
+      "runner_name": "GitHub Actions 1000001203",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470134,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z2Ng",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470134",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470134",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:13:24Z",
+      "completed_at": null,
+      "name": "calc (002304)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:13:25Z",
+          "completed_at": "2026-10-30T13:13:26Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:13:26Z",
+          "completed_at": "2026-10-30T13:13:28Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:13:28Z",
+          "completed_at": "2026-10-30T13:13:28Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:13:28Z",
+          "completed_at": "2026-10-30T13:13:38Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 5,
+          "started_at": "2026-10-30T13:13:38Z",
+          "completed_at": null
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "pending",
+          "conclusion": null,
+          "number": 6,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "pending",
+          "conclusion": null,
+          "number": 7,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "pending",
+          "conclusion": null,
+          "number": 13,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "pending",
+          "conclusion": null,
+          "number": 14,
+          "started_at": null,
+          "completed_at": null
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470134",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001240,
+      "runner_name": "GitHub Actions 1000001240",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470135,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z2Nw",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470135",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470135",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:12:00Z",
+      "completed_at": "2026-10-30T13:16:37Z",
+      "name": "calc (002032)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:12:00Z",
+          "completed_at": "2026-10-30T13:12:01Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:12:01Z",
+          "completed_at": "2026-10-30T13:12:02Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:12:02Z",
+          "completed_at": "2026-10-30T13:12:02Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:12:02Z",
+          "completed_at": "2026-10-30T13:12:12Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:12:12Z",
+          "completed_at": "2026-10-30T13:16:00Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:16:00Z",
+          "completed_at": "2026-10-30T13:16:34Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:16:34Z",
+          "completed_at": "2026-10-30T13:16:36Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:16:36Z",
+          "completed_at": "2026-10-30T13:16:36Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:16:36Z",
+          "completed_at": "2026-10-30T13:16:36Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:16:36Z",
+          "completed_at": "2026-10-30T13:16:36Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470135",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001228,
+      "runner_name": "GitHub Actions 1000001228",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470144,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z2QA",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470144",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470144",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:12:58Z",
+      "completed_at": null,
+      "name": "calc (002050)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:12:59Z",
+          "completed_at": "2026-10-30T13:12:59Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:12:59Z",
+          "completed_at": "2026-10-30T13:13:01Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:13:01Z",
+          "completed_at": "2026-10-30T13:13:01Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:13:01Z",
+          "completed_at": "2026-10-30T13:13:10Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 5,
+          "started_at": "2026-10-30T13:13:10Z",
+          "completed_at": null
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "pending",
+          "conclusion": null,
+          "number": 6,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "pending",
+          "conclusion": null,
+          "number": 7,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "pending",
+          "conclusion": null,
+          "number": 13,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "pending",
+          "conclusion": null,
+          "number": 14,
+          "started_at": null,
+          "completed_at": null
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470144",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001234,
+      "runner_name": "GitHub Actions 1000001234",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470150,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z2Rg",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470150",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470150",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:13Z",
+      "completed_at": "2026-10-30T13:11:11Z",
+      "name": "calc (000333)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:13Z",
+          "completed_at": "2026-10-30T13:08:14Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:14Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:27Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:27Z",
+          "completed_at": "2026-10-30T13:10:29Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:10:29Z",
+          "completed_at": "2026-10-30T13:11:07Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:11:07Z",
+          "completed_at": "2026-10-30T13:11:09Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:11:09Z",
+          "completed_at": "2026-10-30T13:11:09Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:11:09Z",
+          "completed_at": "2026-10-30T13:11:09Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:11:09Z",
+          "completed_at": "2026-10-30T13:11:09Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470150",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001199,
+      "runner_name": "GitHub Actions 1000001199",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470165,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z2VQ",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470165",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470165",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:11:47Z",
+      "completed_at": "2026-10-30T13:15:26Z",
+      "name": "calc (002027)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:11:47Z",
+          "completed_at": "2026-10-30T13:11:48Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:11:48Z",
+          "completed_at": "2026-10-30T13:11:49Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:11:49Z",
+          "completed_at": "2026-10-30T13:11:49Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:11:49Z",
+          "completed_at": "2026-10-30T13:11:56Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:11:56Z",
+          "completed_at": "2026-10-30T13:15:07Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:15:07Z",
+          "completed_at": "2026-10-30T13:15:22Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:15:22Z",
+          "completed_at": "2026-10-30T13:15:24Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:15:24Z",
+          "completed_at": "2026-10-30T13:15:24Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:15:24Z",
+          "completed_at": "2026-10-30T13:15:24Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:15:24Z",
+          "completed_at": "2026-10-30T13:15:24Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470165",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001225,
+      "runner_name": "GitHub Actions 1000001225",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470200,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z2eA",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470200",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470200",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:13Z",
+      "completed_at": "2026-10-30T13:10:59Z",
+      "name": "calc (000630)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:13Z",
+          "completed_at": "2026-10-30T13:08:14Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:14Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:24Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:24Z",
+          "completed_at": "2026-10-30T13:10:43Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:10:43Z",
+          "completed_at": "2026-10-30T13:10:55Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:10:55Z",
+          "completed_at": "2026-10-30T13:10:57Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:10:57Z",
+          "completed_at": "2026-10-30T13:10:57Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:10:57Z",
+          "completed_at": "2026-10-30T13:10:57Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:10:57Z",
+          "completed_at": "2026-10-30T13:10:57Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470200",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001205,
+      "runner_name": "GitHub Actions 1000001205",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470205,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z2fQ",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470205",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470205",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:11:16Z",
+      "completed_at": "2026-10-30T13:16:10Z",
+      "name": "calc (002007)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:11:17Z",
+          "completed_at": "2026-10-30T13:11:17Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:11:17Z",
+          "completed_at": "2026-10-30T13:11:19Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:11:19Z",
+          "completed_at": "2026-10-30T13:11:19Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:11:19Z",
+          "completed_at": "2026-10-30T13:11:29Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:11:29Z",
+          "completed_at": "2026-10-30T13:15:36Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:15:36Z",
+          "completed_at": "2026-10-30T13:16:07Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:16:07Z",
+          "completed_at": "2026-10-30T13:16:08Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:16:08Z",
+          "completed_at": "2026-10-30T13:16:08Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:16:08Z",
+          "completed_at": "2026-10-30T13:16:09Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:16:09Z",
+          "completed_at": "2026-10-30T13:16:09Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470205",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001220,
+      "runner_name": "GitHub Actions 1000001220",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470255,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z2rw",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470255",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470255",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:11:34Z",
+      "completed_at": "2026-10-30T13:17:06Z",
+      "name": "calc (002008)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:11:34Z",
+          "completed_at": "2026-10-30T13:11:35Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:11:35Z",
+          "completed_at": "2026-10-30T13:11:37Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:11:37Z",
+          "completed_at": "2026-10-30T13:11:37Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:11:37Z",
+          "completed_at": "2026-10-30T13:11:47Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:11:47Z",
+          "completed_at": "2026-10-30T13:16:25Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:16:25Z",
+          "completed_at": "2026-10-30T13:17:03Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:17:03Z",
+          "completed_at": "2026-10-30T13:17:05Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:17:05Z",
+          "completed_at": "2026-10-30T13:17:05Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:17:05Z",
+          "completed_at": "2026-10-30T13:17:05Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:17:05Z",
+          "completed_at": "2026-10-30T13:17:05Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470255",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001222,
+      "runner_name": "GitHub Actions 1000001222",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470259,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z2sw",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470259",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470259",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:13Z",
+      "completed_at": "2026-10-30T13:13:07Z",
+      "name": "calc (000938)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:13Z",
+          "completed_at": "2026-10-30T13:08:14Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:14Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:26Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:26Z",
+          "completed_at": "2026-10-30T13:12:30Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:12:30Z",
+          "completed_at": "2026-10-30T13:13:03Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:13:03Z",
+          "completed_at": "2026-10-30T13:13:04Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:13:04Z",
+          "completed_at": "2026-10-30T13:13:05Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:13:05Z",
+          "completed_at": "2026-10-30T13:13:05Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:13:05Z",
+          "completed_at": "2026-10-30T13:13:05Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470259",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001206,
+      "runner_name": "GitHub Actions 1000001206",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079470286,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z2zg",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079470286",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079470286",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:10Z",
+      "started_at": "2026-10-30T13:08:12Z",
+      "completed_at": "2026-10-30T13:12:32Z",
+      "name": "calc (000063)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:08:13Z",
+          "completed_at": "2026-10-30T13:08:14Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:08:14Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:16Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:08:16Z",
+          "completed_at": "2026-10-30T13:08:25Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:08:25Z",
+          "completed_at": "2026-10-30T13:11:58Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:11:58Z",
+          "completed_at": "2026-10-30T13:12:28Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:12:28Z",
+          "completed_at": "2026-10-30T13:12:30Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:12:30Z",
+          "completed_at": "2026-10-30T13:12:30Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:12:30Z",
+          "completed_at": "2026-10-30T13:12:30Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:12:30Z",
+          "completed_at": "2026-10-30T13:12:30Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079470286",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001204,
+      "runner_name": "GitHub Actions 1000001204",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079472446,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z_Pg",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079472446",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079472446",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:11Z",
+      "started_at": "2026-10-30T13:14:57Z",
+      "completed_at": "2026-10-30T13:18:47Z",
+      "name": "calc (002493)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:14:58Z",
+          "completed_at": "2026-10-30T13:14:59Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:14:59Z",
+          "completed_at": "2026-10-30T13:15:00Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:15:00Z",
+          "completed_at": "2026-10-30T13:15:00Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:15:00Z",
+          "completed_at": "2026-10-30T13:15:10Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:15:10Z",
+          "completed_at": "2026-10-30T13:18:12Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:18:12Z",
+          "completed_at": "2026-10-30T13:18:43Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:18:43Z",
+          "completed_at": "2026-10-30T13:18:45Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:18:45Z",
+          "completed_at": "2026-10-30T13:18:45Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:18:45Z",
+          "completed_at": "2026-10-30T13:18:45Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:18:45Z",
+          "completed_at": "2026-10-30T13:18:45Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079472446",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001249,
+      "runner_name": "GitHub Actions 1000001249",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079472450,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47Z_Qg",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079472450",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079472450",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:11Z",
+      "started_at": "2026-10-30T13:14:35Z",
+      "completed_at": "2026-10-30T13:15:07Z",
+      "name": "calc (002468)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:14:36Z",
+          "completed_at": "2026-10-30T13:14:37Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:14:37Z",
+          "completed_at": "2026-10-30T13:14:38Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:14:38Z",
+          "completed_at": "2026-10-30T13:14:38Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:14:38Z",
+          "completed_at": "2026-10-30T13:14:50Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:14:50Z",
+          "completed_at": "2026-10-30T13:15:02Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:15:02Z",
+          "completed_at": "2026-10-30T13:15:03Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:15:03Z",
+          "completed_at": "2026-10-30T13:15:05Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:15:05Z",
+          "completed_at": "2026-10-30T13:15:05Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:15:05Z",
+          "completed_at": "2026-10-30T13:15:05Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:15:05Z",
+          "completed_at": "2026-10-30T13:15:05Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079472450",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001246,
+      "runner_name": "GitHub Actions 1000001246",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079472810,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47aAqg",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079472810",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079472810",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:11Z",
+      "started_at": "2026-10-30T13:15:36Z",
+      "completed_at": "2026-10-30T13:19:00Z",
+      "name": "calc (002555)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:15:37Z",
+          "completed_at": "2026-10-30T13:15:37Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:15:37Z",
+          "completed_at": "2026-10-30T13:15:39Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:15:39Z",
+          "completed_at": "2026-10-30T13:15:39Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:15:39Z",
+          "completed_at": "2026-10-30T13:15:46Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:15:46Z",
+          "completed_at": "2026-10-30T13:18:33Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:18:33Z",
+          "completed_at": "2026-10-30T13:18:57Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:18:57Z",
+          "completed_at": "2026-10-30T13:18:59Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:18:59Z",
+          "completed_at": "2026-10-30T13:18:59Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:18:59Z",
+          "completed_at": "2026-10-30T13:18:59Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:18:59Z",
+          "completed_at": "2026-10-30T13:18:59Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079472810",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001260,
+      "runner_name": "GitHub Actions 1000001260",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079472835,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47aAww",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079472835",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079472835",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:11Z",
+      "started_at": "2026-10-30T13:16:39Z",
+      "completed_at": "2026-10-30T13:19:31Z",
+      "name": "calc (002939)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:16:40Z",
+          "completed_at": "2026-10-30T13:16:40Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:16:40Z",
+          "completed_at": "2026-10-30T13:16:41Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:16:41Z",
+          "completed_at": "2026-10-30T13:16:42Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:16:42Z",
+          "completed_at": "2026-10-30T13:16:49Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:16:49Z",
+          "completed_at": "2026-10-30T13:19:07Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:19:07Z",
+          "completed_at": "2026-10-30T13:19:27Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:19:27Z",
+          "completed_at": "2026-10-30T13:19:29Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:19:29Z",
+          "completed_at": "2026-10-30T13:19:29Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:19:29Z",
+          "completed_at": "2026-10-30T13:19:29Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:19:29Z",
+          "completed_at": "2026-10-30T13:19:29Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079472835",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001271,
+      "runner_name": "GitHub Actions 1000001271",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079472939,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47aBKw",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079472939",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079472939",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:11Z",
+      "started_at": "2026-10-30T13:16:38Z",
+      "completed_at": "2026-10-30T13:19:21Z",
+      "name": "calc (002607)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:16:39Z",
+          "completed_at": "2026-10-30T13:16:40Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:16:40Z",
+          "completed_at": "2026-10-30T13:16:41Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:16:41Z",
+          "completed_at": "2026-10-30T13:16:42Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:16:42Z",
+          "completed_at": "2026-10-30T13:16:50Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:16:50Z",
+          "completed_at": "2026-10-30T13:18:57Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:18:57Z",
+          "completed_at": "2026-10-30T13:19:17Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:19:17Z",
+          "completed_at": "2026-10-30T13:19:19Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:19:19Z",
+          "completed_at": "2026-10-30T13:19:19Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:19:19Z",
+          "completed_at": "2026-10-30T13:19:19Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:19:19Z",
+          "completed_at": "2026-10-30T13:19:19Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079472939",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001270,
+      "runner_name": "GitHub Actions 1000001270",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079472942,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47aBLg",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079472942",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079472942",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:11Z",
+      "started_at": "2026-10-30T13:16:52Z",
+      "completed_at": "2026-10-30T13:19:05Z",
+      "name": "calc (002958)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:16:53Z",
+          "completed_at": "2026-10-30T13:16:53Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:16:53Z",
+          "completed_at": "2026-10-30T13:16:55Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:16:55Z",
+          "completed_at": "2026-10-30T13:16:55Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:16:55Z",
+          "completed_at": "2026-10-30T13:17:03Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:17:03Z",
+          "completed_at": "2026-10-30T13:18:47Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:18:47Z",
+          "completed_at": "2026-10-30T13:19:01Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:19:01Z",
+          "completed_at": "2026-10-30T13:19:02Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:19:02Z",
+          "completed_at": "2026-10-30T13:19:03Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:19:03Z",
+          "completed_at": "2026-10-30T13:19:03Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:19:03Z",
+          "completed_at": "2026-10-30T13:19:03Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079472942",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001272,
+      "runner_name": "GitHub Actions 1000001272",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124079472967,
+      "run_id": 41060701067,
+      "workflow_name": "research-ab",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/hehf21/ci-chan/actions/runs/41060701067",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVcq_5s8AAAAc47aBRw",
+      "head_sha": "e55d5c90cd28db96c51d810282237194edd045a2",
+      "url": "https://api.github.com/repos/hehf21/ci-chan/actions/jobs/124079472967",
+      "html_url": "https://github.com/hehf21/ci-chan/actions/runs/41060701067/job/124079472967",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T13:08:11Z",
+      "started_at": "2026-10-30T13:16:58Z",
+      "completed_at": "2026-10-30T13:20:55Z",
+      "name": "calc (300003)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T13:16:58Z",
+          "completed_at": "2026-10-30T13:16:59Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T13:16:59Z",
+          "completed_at": "2026-10-30T13:17:00Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T13:17:00Z",
+          "completed_at": "2026-10-30T13:17:01Z"
+        },
+        {
+          "name": "Run pip install -r requirements.txt baostock",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T13:17:01Z",
+          "completed_at": "2026-10-30T13:17:11Z"
+        },
+        {
+          "name": "信号（ep1）",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T13:17:11Z",
+          "completed_at": "2026-10-30T13:20:17Z"
+        },
+        {
+          "name": "GG/DD 中枢序列",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T13:20:17Z",
+          "completed_at": "2026-10-30T13:20:51Z"
+        },
+        {
+          "name": "上传分片与日志",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T13:20:51Z",
+          "completed_at": "2026-10-30T13:20:53Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T13:20:53Z",
+          "completed_at": "2026-10-30T13:20:53Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-10-30T13:20:53Z",
+          "completed_at": "2026-10-30T13:20:53Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-10-30T13:20:53Z",
+          "completed_at": "2026-10-30T13:20:53Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/hehf21/ci-chan/check-runs/124079472967",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000001273,
+      "runner_name": "GitHub Actions 1000001273",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}
