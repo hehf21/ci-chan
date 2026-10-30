@@ -57,11 +57,16 @@ def generate(code: str, freq: str, start: str, end: str, window: int,
              require_end_peak: bool = False, allow_panzheng_b1: bool = False,
              require_above_ma: int = 0, step: int = 1,
              require_daily_up: bool = False, daily_step_bars: int = 20,
-             daily_window: int = 800) -> pd.DataFrame:
+             daily_window: int = 800, require_vol_ratio: float = 0.0,
+             vol_short: int = 5, vol_long: int = 20) -> pd.DataFrame:
     """对一只票逐 bar 扫结构，输出首次出现的买卖点。
 
     require_end_peak   : 工程增补 —— 笔端点须为区间极值（对齐 chan.py 口径，默认关）
     allow_panzheng_b1  : 口径开关 —— 一类买卖点是否接受盘整背驰（对应 chan.py 的 1p，默认关）
+    require_vol_ratio  : 第 7/8 课「量能突破」——买点要求近 vol_short 日平均成交量
+                         达到前 vol_long 日均量的 require_vol_ratio 倍（0=关闭）。
+                         原文：「周线上的成交量压力线的突破」才算能搞。
+                         量能按日聚合、只用当日及之前的数据，无未来函数。
     require_daily_up   : 区间套（第 27/17 课）——只在**日线级别向上**时发买点。
                          日线状态用日线线段方向判定（比 MA250 更贴结构），
                          且**每 daily_step_bars 根 30 分钟 bar 重算一次**，避免用未来数据。
@@ -121,6 +126,18 @@ def generate(code: str, freq: str, start: str, end: str, window: int,
                             pass
                 daily_state[_i] = _last_dir
 
+    # ---- 第 7/8 课：量能突破（按日聚合，只用当日及之前）----
+    vol_ratio = None
+    if require_vol_ratio and require_vol_ratio > 0 and "volume" in bars.columns:
+        _tmp = bars[["date", "volume"]].copy()
+        _tmp["d"] = _tmp["date"].dt.normalize()
+        _dv = _tmp.groupby("d")["volume"].sum()
+        _ma_s = _dv.rolling(max(1, int(vol_short))).mean()
+        _ma_l = _dv.rolling(max(2, int(vol_long))).mean().shift(1)   # shift(1)：不含当日
+        _ratio_d = (_ma_s / _ma_l).replace([float("inf"), float("-inf")], None)
+        _ratio_by_day = _ratio_d.to_dict()
+        vol_ratio = [_ratio_by_day.get(d.normalize()) for d in bars["date"]]
+
     seen: set = set()
     rows: list[dict] = []
     t0 = time.time()
@@ -143,6 +160,14 @@ def generate(code: str, freq: str, start: str, end: str, window: int,
             k = (p["kind"], lo + int(p["raw"]), round(float(p["px"]), 4))
             if k in seen:
                 continue
+            # 第 7/8 课：买点要求量能放大；卖点一律照发
+            if vol_ratio is not None and str(p["kind"]).startswith("B"):
+                _vr = vol_ratio[i]
+                try:
+                    if _vr is None or float(_vr) < float(require_vol_ratio):
+                        continue
+                except Exception:
+                    continue
             # 区间套：买点要求日线级别此刻向上；卖点一律照发
             if daily_state is not None and str(p["kind"]).startswith("B"):
                 if int(daily_state[i] or 0) <= 0:
