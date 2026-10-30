@@ -76,6 +76,13 @@ jobs:
           name: sig-${{ inputs.variant }}-${{ matrix.code }}
           path: signals_parts/
           if-no-files-found: error
+      # 顺手把本次取到的行情也传上去：否则 merge 阶段会把缺数据的票重新拉一遍。
+      # 2026-10-30 实测：100 票的 merge 卡在逐票 baostock 取数上，30 分钟还没走完。
+      - uses: actions/upload-artifact@v4
+        with:
+          name: data-${{ matrix.code }}
+          path: data/min30/${{ matrix.code }}.csv.gz
+          if-no-files-found: ignore
 
   merge:
     needs: gen
@@ -86,6 +93,11 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt baostock
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: data-*
+          merge-multiple: true
+          path: data/min30
       - uses: actions/download-artifact@v4
         with:
           pattern: sig-${{ inputs.variant }}-*
