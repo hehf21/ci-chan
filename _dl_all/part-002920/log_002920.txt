@@ -1,0 +1,4 @@
+[完成] 002920 30分钟 13208 根 → 21 个信号，耗时 56s
+002920 variant=ep1 signals=21 -> /home/runner/work/ci-chan/ci-chan/signals_parts/ep1_002920.csv
+[完成] 002920: 13208 根 → 3102 采样点 / GG 非空 3050 / 可判趋势点 2965 / 不变式违规 0 / 异常 0 / 15s
+zs_parts/002920.csv

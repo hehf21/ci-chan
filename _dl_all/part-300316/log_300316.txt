@@ -1,0 +1,4 @@
+[完成] 300316 30分钟 13216 根 → 37 个信号，耗时 64s
+300316 variant=ep1 signals=37 -> /home/runner/work/ci-chan/ci-chan/signals_parts/ep1_300316.csv
+[完成] 300316: 13216 根 → 3104 采样点 / GG 非空 3071 / 可判趋势点 2942 / 不变式违规 0 / 异常 0 / 18s
+zs_parts/300316.csv

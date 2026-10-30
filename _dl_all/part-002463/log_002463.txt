@@ -1,0 +1,4 @@
+[完成] 002463 30分钟 13216 根 → 48 个信号，耗时 61s
+002463 variant=ep1 signals=48 -> /home/runner/work/ci-chan/ci-chan/signals_parts/ep1_002463.csv
+[完成] 002463: 13216 根 → 3104 采样点 / GG 非空 3083 / 可判趋势点 3057 / 不变式违规 0 / 异常 0 / 17s
+zs_parts/002463.csv

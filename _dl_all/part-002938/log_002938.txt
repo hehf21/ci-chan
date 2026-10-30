@@ -1,0 +1,4 @@
+[完成] 002938 30分钟 13216 根 → 52 个信号，耗时 64s
+002938 variant=ep1 signals=52 -> /home/runner/work/ci-chan/ci-chan/signals_parts/ep1_002938.csv
+[完成] 002938: 13216 根 → 3104 采样点 / GG 非空 3083 / 可判趋势点 3083 / 不变式违规 0 / 异常 0 / 18s
+zs_parts/002938.csv

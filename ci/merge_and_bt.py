@@ -67,6 +67,10 @@ def main() -> int:
     ap.add_argument("--start", default="2020-01-01")
     ap.add_argument("--end", default="2026-10-29")
     ap.add_argument("--trade-start", default="2020-07-01")
+    ap.add_argument("--max-positions", type=int, default=3,
+                    help="同时持仓上限（默认3；调大能把更多信号用起来）")
+    ap.add_argument("--max-weight", type=float, default=0.30,
+                    help="单票权重上限")
     a = ap.parse_args()
 
     parts = os.path.join(HERE, "signals_parts")
@@ -79,7 +83,10 @@ def main() -> int:
     sig = pd.concat(frames, ignore_index=True)
     sig["code"] = sig["code"].astype(str).str.zfill(6)
 
-    res = PB.run(sig, "30", a.start, a.end, 1_000_000.0, cfg=BASE_CFG, trade_start=a.trade_start)
+    cfg = dict(BASE_CFG)
+    cfg["max_positions"] = a.max_positions
+    cfg["max_weight_per_stock"] = a.max_weight
+    res = PB.run(sig, "30", a.start, a.end, 1_000_000.0, cfg=cfg, trade_start=a.trade_start)
     eq, tr = res["equity"], res["trades"]
     eq["date"] = pd.to_datetime(eq["date"])
     if not tr.empty:

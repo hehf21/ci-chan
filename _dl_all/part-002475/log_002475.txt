@@ -1,0 +1,4 @@
+[完成] 002475 30分钟 13216 根 → 21 个信号，耗时 113s
+002475 variant=ep1 signals=21 -> /home/runner/work/ci-chan/ci-chan/signals_parts/ep1_002475.csv
+[完成] 002475: 13216 根 → 3104 采样点 / GG 非空 3010 / 可判趋势点 2934 / 不变式违规 0 / 异常 0 / 35s
+zs_parts/002475.csv

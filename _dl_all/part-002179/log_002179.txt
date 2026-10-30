@@ -1,0 +1,4 @@
+[完成] 002179 30分钟 13216 根 → 29 个信号，耗时 124s
+002179 variant=ep1 signals=29 -> /home/runner/work/ci-chan/ci-chan/signals_parts/ep1_002179.csv
+[完成] 002179: 13216 根 → 3104 采样点 / GG 非空 3064 / 可判趋势点 2956 / 不变式违规 0 / 异常 0 / 36s
+zs_parts/002179.csv

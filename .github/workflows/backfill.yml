@@ -45,6 +45,16 @@ on:
         required: false
         default: "3000"
         type: string
+      max_positions:
+        description: "同时持仓上限"
+        required: false
+        default: "3"
+        type: string
+      max_weight:
+        description: "单票权重上限（0.3=30%）"
+        required: false
+        default: "0.30"
+        type: string
 
 permissions:
   contents: read
@@ -126,10 +136,10 @@ jobs:
           merge-multiple: true
           path: signals_parts
       - name: 合并 + 回测
-        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }}
+        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }} --max-positions ${{ inputs.max_positions }} --max-weight ${{ inputs.max_weight }}
       - uses: actions/upload-artifact@v4
         with:
-          name: result-${{ inputs.variant }}
+          name: result-${{ inputs.variant }}-mp${{ inputs.max_positions }}
           path: |
             out/ci_*.json
             out/ci_*_equity.csv

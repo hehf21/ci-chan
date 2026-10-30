@@ -1,0 +1,4 @@
+[完成] 002532 30分钟 13208 根 → 10 个信号，耗时 84s
+002532 variant=ep1 signals=10 -> /home/runner/work/ci-chan/ci-chan/signals_parts/ep1_002532.csv
+[完成] 002532: 13208 根 → 3102 采样点 / GG 非空 3001 / 可判趋势点 2718 / 不变式违规 0 / 异常 0 / 23s
+zs_parts/002532.csv

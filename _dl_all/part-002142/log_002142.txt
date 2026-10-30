@@ -1,0 +1,4 @@
+[完成] 002142 30分钟 13168 根 → 25 个信号，耗时 70s
+002142 variant=ep1 signals=25 -> /home/runner/work/ci-chan/ci-chan/signals_parts/ep1_002142.csv
+[完成] 002142: 13168 根 → 3092 采样点 / GG 非空 3030 / 可判趋势点 2965 / 不变式违规 0 / 异常 0 / 21s
+zs_parts/002142.csv
