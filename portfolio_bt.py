@@ -73,6 +73,11 @@ DEFAULT_CFG = {
     # 第 81 课：「没有顶分型就可以持有睡觉」——即不被小级别结构止损洗出。
     # 打开后不再用「破结构失效价」退出，只靠卖点 / 分型 / 不破前高。
     "no_struct_stop": False,
+    # ---- 真实市场约束（2026-10-30 加）----
+    # 涨跌停不能成交、停牌不能成交、单笔不超过当日成交量的比例。
+    # 之前的回测默认"任何价格都能成交"，这在 A 股是不现实的。
+    "realistic": True,
+    "part_rate": 0.05,        # 单笔最多吃当日成交量的 5%
     "zs_series": "signals/zs_series_20stk.csv",
 }
 
@@ -186,6 +191,16 @@ def run(sig: pd.DataFrame, freq: str, start: str, end: str, capital: float = 1_0
                 still.append(od)
                 continue
             if act["side"] == "buy":
+                if c.get("realistic"):
+                    vol = float(bars[code]["volume"].iloc[i]) if "volume" in bars[code] else 1e12
+                    if vol <= 0:                      # 停牌
+                        still.append(od)
+                        continue
+                    op = float(bars[code]["open"].iloc[i])
+                    prev = float(bars[code]["close"].iloc[i - 1]) if i > 0 else op
+                    if op >= prev * (1 + limit_pct(code)) * 0.999:   # 涨停开盘，买不到
+                        still.append(od)
+                        continue
                 # 防御：若此刻价格已经在止损位下方，这笔买入不成立（否则一进场就该止损）
                 if od.get("stop") and float(bars[code]["open"].iloc[i]) <= float(od["stop"]):
                     _log_skip(code, t, od, "开盘价已跌破止损位")
@@ -197,8 +212,27 @@ def run(sig: pd.DataFrame, freq: str, start: str, end: str, capital: float = 1_0
                     still.append(od)
                     continue
                 px = min(float(bars[code]["open"].iloc[i]), lim) * (1 + SLIP)
+                if c.get("realistic"):
+                    # 成交量参与率：单笔最多吃当日该 bar 成交量的 part_rate，
+                    # 否则等于假设"想要多少都能成交"，小盘股会严重高估收益。
+                    vol = float(bars[code]["volume"].iloc[i])
+                    cap_sh = int(vol * float(c.get("part_rate", 0.05)))
+                    want_sh = int(float(act.get("amount", 0)) / px) if px else 0
+                    if cap_sh > 0 and want_sh > cap_sh:
+                        act = dict(act)
+                        act["amount"] = cap_sh * px
                 _buy(port, code, px, t, act, c)
             else:
+                if c.get("realistic"):
+                    vol = float(bars[code]["volume"].iloc[i]) if "volume" in bars[code] else 1e12
+                    if vol <= 0:                      # 停牌，卖不掉
+                        still.append(od)
+                        continue
+                    op = float(bars[code]["open"].iloc[i])
+                    prev = float(bars[code]["close"].iloc[i - 1]) if i > 0 else op
+                    if op <= prev * (1 - limit_pct(code)) * 1.001:   # 跌停开盘，卖不掉
+                        still.append(od)
+                        continue
                 pos = port["positions"].get(code)
                 if pos and pos["entry_day"] == t.normalize():
                     still.append(od)
@@ -383,6 +417,15 @@ def _log_skip(code: str, t, od: dict, why: str) -> None:
         _log_skip.rows = []
     _log_skip.rows.append({"date": t, "code": code, "why": why, "stop": od.get("stop")})
 
+
+
+
+def limit_pct(code: str) -> float:
+    """涨跌停幅度：创业板/科创板 20%，其余 10%（ST 5% 这里不判，数据里没有 ST 标记）。"""
+    c = str(code).zfill(6)
+    if c.startswith(("300", "301", "688", "689")):
+        return 0.20
+    return 0.10
 
 def _buy(port, code, px, t, act, cfg):
     if code in port["positions"]:      # 防御：已有持仓不再买（不加码）
