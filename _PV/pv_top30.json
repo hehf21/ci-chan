@@ -1,0 +1,13 @@
+{
+ "months": 81,
+ "top": 30,
+ "ret": 35.57,
+ "bench": 108.43,
+ "excess": -72.86,
+ "dd": -31.43,
+ "win_months": 56.8,
+ "bench_win_months": 56.8,
+ "avg_month": 0.55,
+ "avg_bench_month": 1.13,
+ "ic": {}
+}

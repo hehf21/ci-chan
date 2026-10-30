@@ -26,6 +26,16 @@ on:
         required: false
         default: "2026-10-30"
         type: string
+      sign_mode:
+        description: "因子方向：prior=先验 / ic=用样本内IC定符号再做样本外"
+        required: false
+        default: "ic"
+        type: string
+      is_months:
+        description: "定符号用的样本内月数（ic 模式）"
+        required: false
+        default: "36"
+        type: string
       bt_start:
         description: "回测起点"
         required: false
@@ -94,7 +104,9 @@ jobs:
           merge-multiple: true
           path: pv_parts
       - name: 截面回测
-        run: python ci/pv_merge.py --top ${{ inputs.top }} --bt-start ${{ inputs.bt_start }} --end ${{ inputs.end }}
+        run: |
+          python ci/pv_merge.py --top ${{ inputs.top }} --bt-start ${{ inputs.bt_start }} \
+            --end ${{ inputs.end }} --sign-mode ${{ inputs.sign_mode }} --is-months ${{ inputs.is_months }}
       - uses: actions/upload-artifact@v4
         with:
           name: pv-result

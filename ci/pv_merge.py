@@ -73,78 +73,117 @@ def zscore_by_date(p: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     return out
 
 
-def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str) -> dict:
+def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
+                     sign_mode: str = "prior", is_months: int = 36) -> dict:
+    """月末调仓回测。
+
+    sign_mode:
+      prior  —— 用先验符号（动量+、反转-、波动-、换手-、流动性+）
+      ic     —— 用**样本内前 is_months 个月**的 IC 均值定符号，再把该符号用到样本外
+                （这是标准做法：方向不许用未来数据决定）
+    """
     p = p[(p["date"] >= pd.Timestamp(d0)) & (p["date"] <= pd.Timestamp(d1))].copy()
     if p.empty:
         return {"error": "区间内无数据"}
 
     p = zscore_by_date(p, list(FACTORS))
-    p["score"] = sum(sign * p[f + "_z"] for f, sign in FACTORS.items())
-
     p["ym"] = p["date"].dt.to_period("M")
-    # 每票每月最后一个交易日的收盘价 + 因子分数
-    last_px = p.sort_values("date").groupby(["code", "ym"])["close"].last().unstack("ym")
-    last_score = p.sort_values("date").groupby(["code", "ym"])["score"].last().unstack("ym")
+
+    # 每票每月的：末收盘价、末因子值、复合分
+    p_sorted = p.sort_values("date")
+    last_px = p_sorted.groupby(["code", "ym"])["close"].last().unstack("ym")
+    last_f = {f: p_sorted.groupby(["code", "ym"])[f].last().unstack("ym") for f in FACTORS}
+    last_z = {f: p_sorted.groupby(["code", "ym"])[f + "_z"].last().unstack("ym") for f in FACTORS}
 
     yms = sorted(p["ym"].unique())
-    rets, bench, ic_rows = [], [], []
+    if len(yms) < 3:
+        return {"error": "月份太少"}
+
+    # ---- 逐月：算下月收益 + 各因子 Rank IC ----
+    month_rows = []
     for i in range(len(yms) - 1):
         cur, nxt = yms[i], yms[i + 1]
-        sc = last_score[cur].dropna()
         px_cur, px_nxt = last_px[cur], last_px[nxt]
-        common = sc.index.intersection(px_cur.dropna().index).intersection(px_nxt.dropna().index)
-        if len(common) < 10:
+        base = px_cur.dropna().index.intersection(px_nxt.dropna().index)
+        if len(base) < 10:
             continue
-        fwd = (px_nxt[common] / px_cur[common] - 1.0)
+        fwd = (px_nxt[base] / px_cur[base] - 1.0)
+        row = {"ym": cur, "fwd": fwd, "base": base}
+        ics = {}
+        for f in FACTORS:
+            fv = last_f[f][cur].reindex(base)
+            ok = fv.notna()
+            if ok.sum() > 10:
+                ics[f] = float(pd.Series(fv[ok]).corr(pd.Series(fwd[ok]), method="spearman"))
+        row["ic"] = ics
+        month_rows.append(row)
 
-        # 组合：取分数最高的 top 只
-        sel = sc[common].nlargest(min(top, len(common))).index
+    if not month_rows:
+        return {"error": "没有可回测的月份"}
+
+    # ---- 决定符号 ----
+    if sign_mode == "ic":
+        head = month_rows[:max(6, int(is_months))]
+        signs = {}
+        for f in FACTORS:
+            vals = [r["ic"][f] for r in head if f in r["ic"] and r["ic"][f] == r["ic"][f]]
+            mean_ic = float(np.mean(vals)) if vals else 0.0
+            signs[f] = 1 if mean_ic >= 0 else -1
+        trade_rows = month_rows[len(head):]      # 样本外
+    else:
+        signs = dict(FACTORS)
+        trade_rows = month_rows
+
+    if not trade_rows:
+        return {"error": "样本外月份为空"}
+
+    # ---- 组合 ----
+    rets, bench, picks = [], [], []
+    for r in trade_rows:
+        cur, base, fwd = r["ym"], r["base"], r["fwd"]
+        score = None
+        for f in FACTORS:
+            z = last_z[f][cur].reindex(base).fillna(0.0) * signs[f]
+            score = z if score is None else score + z
+        sel = score.nlargest(min(top, len(score))).index
         rets.append(float(fwd[sel].mean()))
         bench.append(float(fwd.mean()))
-
-        # 每月各因子的 Rank IC
-        row = {"month": str(cur), "n": int(len(common))}
-        for f in FACTORS:
-            col = last_score.columns  # 占位
-            try:
-                fv = p[p["ym"] == cur].sort_values("date").groupby("code")[f].last()
-                cc = fv.index.intersection(fwd.index)
-                if len(cc) > 10:
-                    row[f] = round(float(pd.Series(fv[cc]).corr(pd.Series(fwd[cc]), method="spearman")), 4)
-            except Exception:
-                pass
-        ic_rows.append(row)
-
-    if not rets:
-        return {"error": "没有可回测的月份"}
+        picks.append({"month": str(cur), "ret": round(rets[-1] * 100, 2),
+                      "bench": round(bench[-1] * 100, 2), "picks": list(sel[:8])})
 
     eq = np.cumprod([1 + x for x in rets])
     bq = np.cumprod([1 + x for x in bench])
     dd = float((pd.Series(eq) / pd.Series(eq).cummax() - 1).min())
 
-    ic_df = pd.DataFrame(ic_rows)
+    # ---- 因子 IC 汇总（全样本）----
     ic_summary = {}
     for f in FACTORS:
-        if f in ic_df.columns:
-            s = ic_df[f].dropna()
+        vals = [r["ic"][f] for r in month_rows if f in r["ic"] and r["ic"][f] == r["ic"][f]]
+        if vals:
+            arr = np.array(vals)
             ic_summary[f] = {
-                "mean_ic": round(float(s.mean()), 4),
-                "ic_ir": round(float(s.mean() / s.std()), 3) if s.std() > 0 else None,
-                "pos_rate": round(float((s > 0).mean()) * 100, 1),
+                "mean_ic": round(float(arr.mean()), 4),
+                "ic_ir": round(float(arr.mean() / arr.std()), 3) if arr.std() > 0 else None,
+                "pos_rate": round(float((arr > 0).mean()) * 100, 1),
+                "n": int(len(arr)),
             }
 
     return {
-        "months": len(rets),
+        "months_oos": len(rets),
+        "months_total": len(month_rows),
         "top": top,
-        "ret": round((eq[-1] - 1) * 100, 2),
-        "bench": round((bq[-1] - 1) * 100, 2),
-        "excess": round(((eq[-1] - 1) - (bq[-1] - 1)) * 100, 2),
+        "sign_mode": sign_mode,
+        "signs": signs,
+        "ret": round(float(eq[-1] - 1) * 100, 2),
+        "bench": round(float(bq[-1] - 1) * 100, 2),
+        "excess": round(float((eq[-1] - 1) - (bq[-1] - 1)) * 100, 2),
         "dd": round(dd * 100, 2),
         "win_months": round(float(np.mean([1 if x > 0 else 0 for x in rets])) * 100, 1),
         "bench_win_months": round(float(np.mean([1 if x > 0 else 0 for x in bench])) * 100, 1),
         "avg_month": round(float(np.mean(rets)) * 100, 2),
         "avg_bench_month": round(float(np.mean(bench)) * 100, 2),
         "ic": ic_summary,
+        "last_picks": picks[-3:],
     }
 
 
@@ -153,6 +192,9 @@ def main() -> int:
     ap.add_argument("--top", type=int, default=30)
     ap.add_argument("--bt-start", default="2020-01-01")
     ap.add_argument("--end", default="2026-10-30")
+    ap.add_argument("--sign-mode", default="ic", choices=["prior", "ic"],
+                    help="因子方向：prior=先验 / ic=用前若干月 IC 定符号并做样本外")
+    ap.add_argument("--is-months", type=int, default=36, help="定符号用的样本内月数")
     a = ap.parse_args()
 
     p = load_panel()
@@ -160,7 +202,8 @@ def main() -> int:
     if p.empty:
         raise SystemExit("没有 pv_parts 数据")
 
-    res = monthly_backtest(p, a.top, a.bt_start, a.end)
+    res = monthly_backtest(p, a.top, a.bt_start, a.end,
+                           sign_mode=a.sign_mode, is_months=a.is_months)
     print(json.dumps(res, ensure_ascii=False, indent=1))
 
     os.makedirs(os.path.join(HERE, "out"), exist_ok=True)
