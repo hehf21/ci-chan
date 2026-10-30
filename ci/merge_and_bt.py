@@ -114,6 +114,8 @@ def main() -> int:
                     help="同时持仓上限（默认3；调大能把更多信号用起来）")
     ap.add_argument("--max-weight", type=float, default=0.30,
                     help="单票权重上限")
+    ap.add_argument("--min-zs-seg", type=int, default=0,
+                    help="第54课：只做中枢段数 >= N 的买卖点（级别更大，0=关）")
     ap.add_argument("--only-first-zs", action="store_true",
                     help="第79课：只做本走势第一个中枢的第三类买点")
     ap.add_argument("--kinds", default="",
@@ -138,6 +140,13 @@ def main() -> int:
         keep = (~sig["kind"].eq("B3")) | (pd.to_numeric(sig["zs_in_trend"], errors="coerce") == 1)
         sig = sig[keep].copy()
         print(f"[79课过滤] B3 只保留本走势第1个中枢：{before} -> {len(sig)} 条")
+
+    # ---- 第 54 课：按中枢级别（段数）筛选 ----
+    if a.min_zs_seg and a.min_zs_seg > 0 and "zs_nseg" in sig.columns:
+        _n0 = len(sig)
+        _ok = pd.to_numeric(sig["zs_nseg"], errors="coerce")
+        sig = sig[_ok.isna() | (_ok >= a.min_zs_seg)].copy()
+        print(f"[级别过滤] 中枢段数>={a.min_zs_seg}：{_n0} -> {len(sig)} 条")
 
     # ---- 按买卖点类型筛 ----
     if a.kinds:

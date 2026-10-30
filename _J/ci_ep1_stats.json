@@ -1,0 +1,43 @@
+{
+ "variant": "ep1",
+ "signals": 1340,
+ "codes": 128,
+ "kinds": {
+  "S3": 679,
+  "B1": 198,
+  "B3": 162,
+  "S1": 160,
+  "S2": 80,
+  "B2": 61
+ },
+ "segs": [
+  {
+   "name": "样本内",
+   "ret": null
+  },
+  {
+   "name": "样本外",
+   "ret": -1.45,
+   "dd": -31.37,
+   "trades": 11,
+   "win": 0.0,
+   "avg_win": null,
+   "avg_loss": -6.74
+  },
+  {
+   "name": "全段",
+   "ret": -1.45,
+   "dd": -31.37,
+   "trades": 11,
+   "win": 0.0,
+   "avg_win": null,
+   "avg_loss": -6.74
+  },
+  {
+   "name": "同池买入持有",
+   "ret": -5.44,
+   "win": 30.5,
+   "codes": 128
+  }
+ ]
+}

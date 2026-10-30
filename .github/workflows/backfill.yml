@@ -85,6 +85,11 @@ on:
         required: false
         default: "false"
         type: string
+      min_zs_seg:
+        description: "第54课：只做中枢段数>=N的买卖点（0=关）"
+        required: false
+        default: "0"
+        type: string
       kinds:
         description: "只留这些点类型，如 B3,S1,S2,S3（空=全部）"
         required: false
@@ -180,7 +185,7 @@ jobs:
           merge-multiple: true
           path: signals_parts
       - name: 合并 + 回测
-        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }} --freq ${{ inputs.freq }} --max-positions ${{ inputs.max_positions }} --max-weight ${{ inputs.max_weight }} ${{ inputs.only_first_zs == 'true' && '--only-first-zs' || '' }} --kinds "${{ inputs.kinds }}"
+        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }} --freq ${{ inputs.freq }} --max-positions ${{ inputs.max_positions }} --max-weight ${{ inputs.max_weight }} ${{ inputs.only_first_zs == 'true' && '--only-first-zs' || '' }} --kinds "${{ inputs.kinds }}" --min-zs-seg ${{ inputs.min_zs_seg }}
       - uses: actions/upload-artifact@v4
         with:
           name: result-${{ inputs.variant }}-mp${{ inputs.max_positions }}-zs${{ inputs.only_first_zs }}-ma${{ inputs.require_above_ma }}-nest${{ inputs.require_daily_up }}-${{ inputs.kinds }}

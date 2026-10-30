@@ -197,6 +197,8 @@ def find_points(
                         "stop": float(z["ZG"]),
                         "zs_in_trend": trend_of.get(k, (None, None))[1],
                         "trend_idx": trend_of.get(k, (None, None))[0],
+                        # 第 54 课「买点级别决定仓位」的量化代理：中枢段数越多，级别越大
+                        "zs_nseg": int(z["n_seg"]),
                         "evidence": (
                             f"中枢(第{k+1}个,本走势第{trend_of.get(k, (None, None))[1]}个,"
                             f"[{z['ZD']:.2f},{z['ZG']:.2f}])后第 1 段向上离开、"
