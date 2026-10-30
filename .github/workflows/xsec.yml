@@ -1,0 +1,117 @@
+name: xsec
+
+# 截面选股：把缠论结构当因子（而不是择时信号）
+# plan 出股票池 → calc 每票生成中枢序列（矩阵并行）→ analyze 做月度截面回测
+
+on:
+  workflow_dispatch:
+    inputs:
+      n:
+        description: "抽多少只票（0=仓库里现有的全部）"
+        required: false
+        default: "150"
+        type: string
+      step:
+        description: "中枢序列采样间隔（根）；20≈每 2.5 天一次"
+        required: false
+        default: "20"
+        type: string
+      top:
+        description: "每月买入前多少只"
+        required: false
+        default: "20"
+        type: string
+      start:
+        description: "取数起点"
+        required: false
+        default: "2022-01-01"
+        type: string
+      end:
+        description: "取数终点"
+        required: false
+        default: "2026-10-29"
+        type: string
+      bt_start:
+        description: "回测起点"
+        required: false
+        default: "2023-01-01"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - id: m
+        run: |
+          set -e
+          CODES=$(python ci/universe.py --all --n ${{ inputs.n }})
+          echo "codes=$CODES"
+          echo "matrix=$(python3 -c "import json,sys;print(json.dumps([c for c in sys.argv[1].split(',') if c]))" "$CODES")" >> "$GITHUB_OUTPUT"
+
+  calc:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        code: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - name: 生成中枢序列
+        run: |
+          python ci/zs_stock.py --code ${{ matrix.code }} --start ${{ inputs.start }} \
+            --end ${{ inputs.end }} --step ${{ inputs.step }} --outdir zs_parts || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zs-${{ matrix.code }}
+          path: zs_parts/${{ matrix.code }}.csv
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: px-${{ matrix.code }}
+          path: data/min30/${{ matrix.code }}.csv.gz
+          if-no-files-found: ignore
+
+  analyze:
+    needs: calc
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: zs-*
+          merge-multiple: true
+          path: zs_parts
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: px-*
+          merge-multiple: true
+          path: data/min30
+      - name: 截面回测
+        run: python ci/xsec.py --top ${{ inputs.top }} --start ${{ inputs.bt_start }} --end ${{ inputs.end }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: xsec-result
+          path: out/xsec_*.json
+          if-no-files-found: error
