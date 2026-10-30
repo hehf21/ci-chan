@@ -16,10 +16,14 @@ def _bs_code(code: str) -> str:
 
 
 def fetch_min30(code: str, start: str = "2020-01-01", end: str | None = None) -> pd.DataFrame:
+    import contextlib
+    import io
+
     import baostock as bs
 
     end = end or pd.Timestamp.today().strftime("%Y-%m-%d")
-    lg = bs.login()
+    with contextlib.redirect_stdout(io.StringIO()):   # baostock 会往 stdout 打印 login/logout success
+        lg = bs.login()
     if lg.error_code != "0":
         raise RuntimeError(f"baostock 登录失败：{lg.error_msg}")
     try:
@@ -32,7 +36,8 @@ def fetch_min30(code: str, start: str = "2020-01-01", end: str | None = None) ->
         while rs.next():
             rows.append(rs.get_row_data())
     finally:
-        bs.logout()
+        with contextlib.redirect_stdout(io.StringIO()):
+            bs.logout()
 
     df = pd.DataFrame(rows, columns=["date", "time", "open", "high", "low", "close", "volume", "amount"])
     if df.empty:
