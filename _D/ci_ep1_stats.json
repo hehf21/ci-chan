@@ -1,0 +1,35 @@
+{
+ "variant": "ep1",
+ "signals": 747,
+ "codes": 115,
+ "kinds": {
+  "S3": 340,
+  "B3": 278,
+  "S1": 82,
+  "S2": 47
+ },
+ "segs": [
+  {
+   "name": "样本内",
+   "ret": null
+  },
+  {
+   "name": "样本外",
+   "ret": 1.8,
+   "dd": -32.92,
+   "trades": 16,
+   "win": 25.0,
+   "avg_win": 41.52,
+   "avg_loss": -10.2
+  },
+  {
+   "name": "全段",
+   "ret": 1.8,
+   "dd": -32.92,
+   "trades": 16,
+   "win": 25.0,
+   "avg_win": 41.52,
+   "avg_loss": -10.2
+  }
+ ]
+}

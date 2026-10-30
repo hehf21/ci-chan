@@ -61,6 +61,43 @@ def seg(eq, rts, d0, d1, name):
             "avg_loss": round(t.loc[t["ret"] <= 0, "ret"].mean(), 2) if len(t) and (t["ret"] <= 0).any() else None}
 
 
+
+
+def buy_hold_benchmark(codes, d0, d1) -> dict:
+    """同池等权买入持有：用 merge 阶段已有的 data/min30/*.csv.gz，不额外取数。
+
+    没有基准就没法判断"策略赚的是能力还是市场"。这一步必须做。
+    """
+    import glob
+    import gzip
+
+    data_dir = os.path.join(HERE, "data", "min30")
+    rets, used = [], 0
+    for c in sorted(set(codes)):
+        path = os.path.join(data_dir, f"{c}.csv.gz")
+        if not os.path.exists(path):
+            continue
+        try:
+            with gzip.open(path, "rt", encoding="utf-8") as f:
+                df = pd.read_csv(f)
+        except Exception:
+            continue
+        if "date" not in df.columns or "close" not in df.columns or len(df) < 10:
+            continue
+        df["date"] = pd.to_datetime(df["date"])
+        m = (df["date"] >= pd.Timestamp(d0)) & (df["date"] <= pd.Timestamp(d1))
+        s_ = df.loc[m, "close"]
+        if len(s_) < 2:
+            continue
+        rets.append(float(s_.iloc[-1]) / float(s_.iloc[0]) - 1)
+        used += 1
+    if not rets:
+        return {"name": "同池买入持有", "ret": None, "codes": 0}
+    avg = sum(rets) / len(rets)
+    win = sum(1 for r in rets if r > 0) / len(rets) * 100
+    return {"name": "同池买入持有", "ret": round(avg * 100, 2),
+            "win": round(win, 1), "codes": used}
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--variant", default="ep1", choices=["ep0", "ep1"])
@@ -130,6 +167,8 @@ def main() -> int:
             seg(eq, rts, pd.Timestamp(a.trade_start), pd.Timestamp("2023-12-31"), "样本内"),
             seg(eq, rts, pd.Timestamp("2024-01-01"), pd.Timestamp(a.end), "样本外"),
             seg(eq, rts, pd.Timestamp(a.trade_start), pd.Timestamp(a.end), "全段"),
+            # 基准：同池等权买入持有（同区间、同股票池）——判断"赚的是能力还是市场"
+            buy_hold_benchmark(sorted(set(sig["code"])), a.trade_start, a.end),
         ],
     }
     with open(os.path.join(out, f"ci_{a.variant}_stats.json"), "w", encoding="utf-8") as f:
