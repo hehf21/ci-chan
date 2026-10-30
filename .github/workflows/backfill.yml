@@ -25,6 +25,11 @@ on:
         required: false
         default: ""
         type: string
+      step:
+        description: "扫描步长（30分钟=1，日线建议5）"
+        required: false
+        default: "1"
+        type: string
       freq:
         description: "周期：30=30分钟 / d=日线"
         required: false
@@ -122,7 +127,7 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt baostock
       - name: 生成信号（缺数据时现场取）
-        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --window ${{ inputs.window }} --freq ${{ inputs.freq }} --require-above-ma ${{ inputs.require_above_ma }}
+        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --window ${{ inputs.window }} --freq ${{ inputs.freq }} --step ${{ inputs.step }} --require-above-ma ${{ inputs.require_above_ma }}
       - uses: actions/upload-artifact@v4
         with:
           name: sig-${{ inputs.variant }}-${{ matrix.code }}
