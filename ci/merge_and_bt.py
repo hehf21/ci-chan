@@ -71,6 +71,10 @@ def main() -> int:
                     help="同时持仓上限（默认3；调大能把更多信号用起来）")
     ap.add_argument("--max-weight", type=float, default=0.30,
                     help="单票权重上限")
+    ap.add_argument("--only-first-zs", action="store_true",
+                    help="第79课：只做本走势第一个中枢的第三类买点")
+    ap.add_argument("--kinds", default="",
+                    help="只保留这些买卖点类型，逗号分隔，如 B3,S1,S2,S3；空=全部")
     a = ap.parse_args()
 
     parts = os.path.join(HERE, "signals_parts")
@@ -82,6 +86,24 @@ def main() -> int:
         raise SystemExit(f"没有找到 {a.variant} 的信号分片")
     sig = pd.concat(frames, ignore_index=True)
     sig["code"] = sig["code"].astype(str).str.zfill(6)
+
+    before = len(sig)
+    # ---- 第79课：只介入第一个中枢的第三类买点 ----
+    # 原文：尽量只介入第一个中枢的第三类买点，因为第二个中枢以后形成大级别中枢的概率急促加大。
+    # 卖点不筛（持仓遇到卖点就要走）。
+    if a.only_first_zs and "zs_in_trend" in sig.columns:
+        keep = (~sig["kind"].eq("B3")) | (pd.to_numeric(sig["zs_in_trend"], errors="coerce") == 1)
+        sig = sig[keep].copy()
+        print(f"[79课过滤] B3 只保留本走势第1个中枢：{before} -> {len(sig)} 条")
+
+    # ---- 按买卖点类型筛 ----
+    if a.kinds:
+        want = {k.strip().upper() for k in a.kinds.split(",") if k.strip()}
+        sig = sig[sig["kind"].str.upper().isin(want)].copy()
+        print(f"[类型过滤] {sorted(want)}：{before} -> {len(sig)} 条")
+
+    if sig.empty:
+        raise SystemExit("过滤后没有信号，检查口径参数")
 
     cfg = dict(BASE_CFG)
     cfg["max_positions"] = a.max_positions

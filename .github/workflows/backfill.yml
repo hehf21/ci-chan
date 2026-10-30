@@ -55,6 +55,16 @@ on:
         required: false
         default: "0.30"
         type: string
+      only_first_zs:
+        description: "第79课：只做第一个中枢的三买（true/false）"
+        required: false
+        default: "false"
+        type: string
+      kinds:
+        description: "只留这些点类型，如 B3,S1,S2,S3（空=全部）"
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
@@ -139,10 +149,10 @@ jobs:
           merge-multiple: true
           path: signals_parts
       - name: 合并 + 回测
-        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }} --max-positions ${{ inputs.max_positions }} --max-weight ${{ inputs.max_weight }}
+        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }} --max-positions ${{ inputs.max_positions }} --max-weight ${{ inputs.max_weight }} ${{ inputs.only_first_zs == 'true' && '--only-first-zs' || '' }} --kinds "${{ inputs.kinds }}"
       - uses: actions/upload-artifact@v4
         with:
-          name: result-${{ inputs.variant }}-mp${{ inputs.max_positions }}
+          name: result-${{ inputs.variant }}-mp${{ inputs.max_positions }}-${{ inputs.only_first_zs }}-${{ inputs.kinds }}
           path: |
             out/ci_*.json
             out/ci_*_equity.csv
