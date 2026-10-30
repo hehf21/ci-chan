@@ -1,0 +1,128 @@
+name: research-ab
+
+# 团队研究专用：信号生成 + GG 中枢序列生成 + A0/A1/ZG 对照回测，全在 Actions 算。
+# 单次全量（约 110 只票）账单约 500-600 分钟，跑之前想清楚额度。
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: "信号口径：ep0=仅修断流 / ep1=再加笔端点须为区间极值"
+        required: true
+        default: ep1
+        type: choice
+        options: [ep0, ep1]
+      codes:
+        description: "只跑这些票（逗号分隔，留空=仓库 data/min30 里的全部）"
+        required: false
+        default: ""
+        type: string
+      step:
+        description: "中枢序列采样间隔（根）；4=每 2 小时一次"
+        required: false
+        default: "4"
+        type: string
+      limit:
+        description: "最多跑多少只（0=不限，调试用 20 省额度）"
+        required: false
+        default: "0"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: m
+        run: |
+          set -e
+          if [ -n "${{ inputs.codes }}" ]; then
+            CODES="${{ inputs.codes }}"
+          else
+            CODES=$(ls data/min30 | sed 's/\.csv\.gz$//' | paste -sd, -)
+          fi
+          if [ "${{ inputs.limit }}" != "0" ]; then
+            CODES=$(python3 -c "import sys;c=[x for x in sys.argv[1].split(',') if x][:${{ inputs.limit }}];print(','.join(c))" "$CODES")
+          fi
+          echo "codes=$CODES"
+          echo "matrix=$(python3 -c "import json,sys;print(json.dumps([c for c in sys.argv[1].split(',') if c]))" "$CODES")" >> "$GITHUB_OUTPUT"
+
+  calc:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        code: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - name: 信号（${{ inputs.variant }}）
+        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }}
+      - name: GG/DD 中枢序列
+        run: python ci/zs_stock.py --code ${{ matrix.code }} --step ${{ inputs.step }} --outdir zs_parts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: part-${{ matrix.code }}
+          path: |
+            signals_parts/
+            zs_parts/
+          if-no-files-found: error
+
+  ab:
+    needs: calc
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: part-*
+          merge-multiple: true
+          path: .
+      - name: 合并输入
+        run: python ci/merge_inputs.py --variant ${{ inputs.variant }}
+      - name: A0 / A1 / ZG 对照
+        run: |
+          python ci/bt_gg.py --signals out/signals_merged.csv --zs out/zs_series_gg.csv \
+            --arm both --dedupe rule40 --out ${{ inputs.variant }}_A0A1
+          python ci/bt_gg.py --signals out/signals_merged.csv --zs out/zs_series_gg.csv \
+            --arm ZG --dedupe rule40 --out ${{ inputs.variant }}_ZG
+      - name: 汇总
+        run: |
+          python3 - <<'PY'
+          import glob, json, os
+          rows = {}
+          for p in sorted(glob.glob("ci/res_*.json")):
+              d = json.load(open(p, encoding="utf-8"))
+              rows[os.path.basename(p)] = {
+                  "n_signals_used": d.get("n_signals_used"),
+                  "codes": len(d.get("codes") or []),
+                  "arms": {k: {"stats": v.get("stats"), "split": v.get("split"),
+                               "gg_hits": v.get("gg_hits")} for k, v in (d.get("arms") or {}).items()},
+              }
+          os.makedirs("out", exist_ok=True)
+          json.dump(rows, open("out/ab_summary.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+          print(json.dumps(rows, ensure_ascii=False, indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ab-result-${{ inputs.variant }}
+          path: |
+            out/ab_summary.json
+            out/signals_merged.csv
+            ci/res_*.json
+            ci/trades_*.csv
