@@ -29,13 +29,16 @@ def main() -> int:
     ap.add_argument("--start", default="2020-01-01")
     ap.add_argument("--end", default="2026-10-29")
     ap.add_argument("--window", type=int, default=3000)
+    ap.add_argument("--require-above-ma", type=int, default=0,
+                    help="第8课能搞：只在收盘站上 N 日线时发买点（0=关）")
     a = ap.parse_args()
 
     out_dir = os.path.join(HERE, "signals_parts")
     os.makedirs(out_dir, exist_ok=True)
     try:
         df = SG.generate(a.code, "30", a.start, a.end, a.window, verbose=False,
-                         require_end_peak=VARIANTS[a.variant])
+                         require_end_peak=VARIANTS[a.variant],
+                         require_above_ma=a.require_above_ma)
     except FileNotFoundError as e:
         # 退市 / 停牌太久 / baostock 无数据的票：写空分片，不让整个矩阵挂掉
         print(f"SKIP {a.code}: {e}")

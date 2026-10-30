@@ -55,6 +55,11 @@ on:
         required: false
         default: "0.30"
         type: string
+      require_above_ma:
+        description: "第8课能搞：站上 N 日线才发买点（0=关，250=年线）"
+        required: false
+        default: "0"
+        type: string
       only_first_zs:
         description: "第79课：只做第一个中枢的三买（true/false）"
         required: false
@@ -112,7 +117,7 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt baostock
       - name: 生成信号（缺数据时现场取）
-        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --window ${{ inputs.window }}
+        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --window ${{ inputs.window }} --require-above-ma ${{ inputs.require_above_ma }}
       - uses: actions/upload-artifact@v4
         with:
           name: sig-${{ inputs.variant }}-${{ matrix.code }}
@@ -152,7 +157,7 @@ jobs:
         run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }} --max-positions ${{ inputs.max_positions }} --max-weight ${{ inputs.max_weight }} ${{ inputs.only_first_zs == 'true' && '--only-first-zs' || '' }} --kinds "${{ inputs.kinds }}"
       - uses: actions/upload-artifact@v4
         with:
-          name: result-${{ inputs.variant }}-mp${{ inputs.max_positions }}-${{ inputs.only_first_zs }}-${{ inputs.kinds }}
+          name: result-${{ inputs.variant }}-mp${{ inputs.max_positions }}-zs${{ inputs.only_first_zs }}-ma${{ inputs.require_above_ma }}-${{ inputs.kinds }}
           path: |
             out/ci_*.json
             out/ci_*_equity.csv

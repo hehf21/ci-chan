@@ -52,11 +52,15 @@ def load_bars(code: str, freq: str, start: str, end: str) -> pd.DataFrame | None
 def generate(code: str, freq: str, start: str, end: str, window: int,
              min_bars: int = 800, verbose: bool = True,
              max_age_bars: int = 40,
-             require_end_peak: bool = False, allow_panzheng_b1: bool = False) -> pd.DataFrame:
+             require_end_peak: bool = False, allow_panzheng_b1: bool = False,
+             require_above_ma: int = 0) -> pd.DataFrame:
     """对一只票逐 bar 扫结构，输出首次出现的买卖点。
 
     require_end_peak   : 工程增补 —— 笔端点须为区间极值（对齐 chan.py 口径，默认关）
     allow_panzheng_b1  : 口径开关 —— 一类买卖点是否接受盘整背驰（对应 chan.py 的 1p，默认关）
+    require_above_ma   : 第 8 课「能搞」标准 —— 只在收盘价站上 N 日线时才发买点。
+                         原文：「不能搞的就无论发生什么情况都不能搞」，用 250 日线（年线）卡门槛。
+                         卖点不受此限（持仓该走就走）。0=关闭。
     """
     bars = load_bars(code, freq, start, end)
     if bars is None or len(bars) < min_bars:
@@ -66,6 +70,16 @@ def generate(code: str, freq: str, start: str, end: str, window: int,
     bars["date"] = pd.to_datetime(bars["date"])
     bars = bars.sort_values("date").reset_index(drop=True)
     ohlc = bars[["open", "high", "low", "close"]]
+
+    # ---- 第 8 课「能搞」：N 日线过滤 ----
+    ma_series = None
+    if require_above_ma and require_above_ma > 0:
+        _daily = (bars.set_index("date")["close"]
+                  .resample("1D").last().dropna())
+        _ma = _daily.rolling(int(require_above_ma)).mean()
+        _df = pd.DataFrame({"close": _daily, "ma": _ma}).dropna()
+        _df = _df.reindex(bars["date"], method="ffill")     # 按 bar 时间对齐
+        ma_series = _df.reset_index(drop=True)
 
     seen: set = set()
     rows: list[dict] = []
@@ -89,6 +103,14 @@ def generate(code: str, freq: str, start: str, end: str, window: int,
             k = (p["kind"], lo + int(p["raw"]), round(float(p["px"]), 4))
             if k in seen:
                 continue
+            # 第 8 课：买点要求已站上 N 日线；卖点一律照发
+            if ma_series is not None and str(p["kind"]).startswith("B"):
+                try:
+                    _row = ma_series.iloc[i]
+                    if pd.isna(_row["ma"]) or float(_row["close"]) < float(_row["ma"]):
+                        continue
+                except Exception:
+                    pass
             seen.add(k)
             rows.append({
                 "ts": bars["date"].iloc[i],
