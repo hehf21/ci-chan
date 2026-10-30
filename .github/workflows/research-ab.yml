@@ -1,7 +1,8 @@
 name: research-ab
 
 # 团队研究专用：信号生成 + GG 中枢序列生成 + A0/A1/ZG 对照回测，全在 Actions 算。
-# 单次全量（约 110 只票）账单约 500-600 分钟，跑之前想清楚额度。
+# 2026-10-30 修订：calc 两步允许失败（continue-on-error）并上传日志；
+#                ab 用 always() 跑，且可用 extra_run_id 复用上一次 run 的 part-* 工件。
 on:
   workflow_dispatch:
     inputs:
@@ -26,9 +27,15 @@ on:
         required: false
         default: "0"
         type: string
+      extra_run_id:
+        description: "额外复用哪个 run 的 part-* 工件（补跑分支用，留空=不用）"
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   plan:
@@ -57,7 +64,7 @@ jobs:
     timeout-minutes: 60
     strategy:
       fail-fast: false
-      max-parallel: 20
+      max-parallel: 12
       matrix:
         code: ${{ fromJSON(needs.plan.outputs.matrix) }}
     steps:
@@ -67,19 +74,31 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt baostock
       - name: 信号（${{ inputs.variant }}）
-        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }}
+        shell: bash
+        run: |
+          set -o pipefail
+          python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }} 2>&1 | tee "log_${{ matrix.code }}.txt"
+        continue-on-error: true
       - name: GG/DD 中枢序列
-        run: python ci/zs_stock.py --code ${{ matrix.code }} --step ${{ inputs.step }} --outdir zs_parts
-      - uses: actions/upload-artifact@v4
+        shell: bash
+        run: |
+          set -o pipefail
+          python ci/zs_stock.py --code ${{ matrix.code }} --step ${{ inputs.step }} --outdir zs_parts 2>&1 | tee -a "log_${{ matrix.code }}.txt"
+        continue-on-error: true
+      - name: 上传分片与日志
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: part-${{ matrix.code }}
           path: |
             signals_parts/
             zs_parts/
-          if-no-files-found: error
+            log_${{ matrix.code }}.txt
+          if-no-files-found: warn
 
   ab:
     needs: calc
+    if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -88,11 +107,21 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt baostock
-      - uses: actions/download-artifact@v4
+      - name: 下载本次分片
+        uses: actions/download-artifact@v4
         with:
           pattern: part-*
           merge-multiple: true
           path: .
+      - name: 复用上一次 run 的分片
+        if: inputs.extra_run_id != ''
+        uses: actions/download-artifact@v4
+        with:
+          pattern: part-*
+          merge-multiple: true
+          path: .
+          run-id: ${{ inputs.extra_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: 合并输入
         run: python ci/merge_inputs.py --variant ${{ inputs.variant }}
       - name: A0 / A1 / ZG 对照
@@ -119,10 +148,12 @@ jobs:
           print(json.dumps(rows, ensure_ascii=False, indent=2))
           PY
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: ab-result-${{ inputs.variant }}
           path: |
             out/ab_summary.json
-            out/signals_merged.csv
             ci/res_*.json
             ci/trades_*.csv
+            log_*.txt
+          if-no-files-found: warn
