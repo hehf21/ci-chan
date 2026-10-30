@@ -1,0 +1,35 @@
+name: probe-baostock
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install baostock pandas
+      - name: 试取一只票的 30 分钟线
+        run: |
+          python - <<'PY'
+          import baostock as bs
+          import pandas as pd
+          lg = bs.login()
+          print("login:", lg.error_code, lg.error_msg)
+          rows = []
+          rs = bs.query_history_k_data_plus(
+              "sh.600036", "date,time,open,high,low,close,volume,amount",
+              start_date="2025-01-01", end_date="2025-03-01", frequency="30", adjustflag="2")
+          print("query:", rs.error_code, rs.error_msg)
+          while rs.error_code == '0' and rs.next():
+              rows.append(rs.get_row_data())
+          print("rows:", len(rows))
+          if rows:
+              print(rows[0])
+              print(rows[-1])
+          bs.logout()
+          PY
