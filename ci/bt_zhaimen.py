@@ -544,12 +544,18 @@ def main() -> int:
     for mode in modes:
         for arm in arms:
             a = results[mode][arm]
-            dir_tr = [x for x in a["trades"] if x["exit_day"] <= x["entry_day"]]
+            # T+1 只约束「决策驱动的卖出」。期末平仓是记账动作（持仓必须了结才能对账），
+            # 它天然可能与买入同日，不能算违规 —— 之前把 9 笔期末平仓误报成 T+1 违规就是这么来的。
+            dir_tr = [x for x in a["trades"]
+                      if x["reason"] != "期末平仓" and x["exit_day"] <= x["entry_day"]]
+            forced = [x for x in a["trades"]
+                      if x["reason"] == "期末平仓" and x["exit_day"] <= x["entry_day"]]
             bad_stop = [x for x in a["trades"] if x["stop0"] >= x["entry_px"]]
             drift = (a["final_equity"] - CAPITAL) - a["all"]["pnl_sum"]
             checks[f"{mode}/{arm}"] = {
                 "rounds": len(a["trades"]), "filled_buys": a["filled_buys"],
-                "t1_violations": len(dir_tr), "stop_above_entry": len(bad_stop),
+                "t1_violations": len(dir_tr), "forced_same_day": len(forced),
+                "stop_above_entry": len(bad_stop),
                 "identity_drift": drift, "identity_ok": abs(drift) <= CAPITAL * 1e-6,
                 "zero_rounds": len(a["trades"]) == 0}
 
