@@ -1,0 +1,84 @@
+name: backfill
+
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: "口径：ep0=仅修断流 / ep1=再加笔端点须为区间极值"
+        required: true
+        default: ep1
+        type: choice
+        options: [ep0, ep1]
+      codes:
+        description: "只跑这些票（逗号分隔，留空=全部）"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: m
+        run: |
+          if [ -n "${{ inputs.codes }}" ]; then
+            CODES="${{ inputs.codes }}"
+          else
+            CODES=$(ls data/min30 | sed 's/\.csv\.gz$//' | paste -sd, -)
+          fi
+          echo "codes=$CODES"
+          JSON=$(python3 -c "import json,sys;print(json.dumps([c for c in sys.argv[1].split(',') if c]))" "$CODES")
+          echo "matrix=$JSON" >> "$GITHUB_OUTPUT"
+
+  gen:
+    needs: plan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        code: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: 生成信号
+        run: python ci/run_stock.py --code ${{ matrix.code }} --variant ${{ inputs.variant }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sig-${{ inputs.variant }}-${{ matrix.code }}
+          path: signals_parts/
+          if-no-files-found: error
+
+  merge:
+    needs: gen
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: sig-${{ inputs.variant }}-*
+          merge-multiple: true
+          path: signals_parts
+      - name: 合并 + 回测
+        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ inputs.variant }}
+          path: |
+            out/ci_*.json
+            out/ci_*_equity.csv
+            out/ci_*_trades.csv
+            out/ci_*_roundtrips.csv
