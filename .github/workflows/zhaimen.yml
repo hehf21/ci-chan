@@ -1,0 +1,124 @@
+name: zhaimen
+
+# 结构闸门 / 止损口径对照回测：一票一个 job，卡住的票单独失败，不拖累其它票。
+on:
+  workflow_dispatch:
+    inputs:
+      codes:
+        description: "只跑这些票（逗号分隔，留空=仓库 data/min30 里全部）"
+        required: false
+        default: ""
+        type: string
+      extra_args:
+        description: "额外参数（如 --no-wf 只跑 naive 口径）"
+        required: false
+        default: ""
+        type: string
+  push:
+    paths:
+      - ".github/workflows/zhaimen.yml"
+      - "ci/bt_zhaimen.py"
+      - "chan_law.py"
+      - "verify_real.py"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  calc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        code:
+          - "000001"
+          - "000002"
+          - "000333"
+          - "000651"
+          - "000858"
+          - "002594"
+          - "600009"
+          - "600030"
+          - "600036"
+          - "600048"
+          - "600104"
+          - "600276"
+          - "600519"
+          - "600585"
+          - "600887"
+          - "601088"
+          - "601166"
+          - "601318"
+          - "601398"
+          - "601601"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: deps
+        run: |
+          python -m pip install --quiet --upgrade pip
+          pip install --quiet -r requirements.txt
+
+      - name: run ${{ matrix.code }}
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          export ZG_OUT="$PWD/ci/_out"
+          mkdir -p "$ZG_OUT"
+          python ci/bt_zhaimen.py --codes ${{ matrix.code }} --jobs 1 \
+            --tag ${{ matrix.code }} ${{ github.event.inputs.extra_args || '' }} 2>&1 | tee "log_${{ matrix.code }}.txt"
+          ls -l "$ZG_OUT" || true
+
+      - name: upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhaimen-${{ matrix.code }}
+          path: |
+            ci/_out/结果-闸门-*.json
+            ci/_out/结果-闸门-*.md
+            log_${{ matrix.code }}.txt
+          if-no-files-found: warn
+
+  merge:
+    needs: calc
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: deps
+        run: pip install --quiet -r requirements.txt
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: _art
+          pattern: zhaimen-*
+          merge-multiple: true
+
+      - name: merge
+        run: |
+          ls -R _art | head -40
+          python ci/merge_zhaimen.py --indir _art --outdir ci
+
+      - name: upload summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zhaimen-summary
+          path: |
+            ci/汇总-闸门.json
+            ci/汇总-闸门.md
+          if-no-files-found: warn
