@@ -35,7 +35,9 @@ def load_bars(code: str, limit: int | None = None):
     # 数据先验：零价/负价整行剔除（601088 历史上出现过 80 根全 0 的行情洞）
     ok = (df[["open", "high", "low", "close"]] > 0).all(axis=1)
     df = df[ok].reset_index(drop=True)
-    df["date"] = pd.to_datetime(df["date"])
+    # 必须统一成 ns：pandas 3 会把 CSV 解析成 datetime64[us]，
+    # 而回测里用 ts.astype("int64") 与纳秒级常量比较，us 会让所有 bar 都"早于起点"
+    df["date"] = pd.to_datetime(df["date"]).astype("datetime64[ns]")
     if limit:
         df = df.iloc[-int(limit):].reset_index(drop=True)
     bars = [L.Bar(t=i, high=float(df["high"].iloc[i]), low=float(df["low"].iloc[i]),

@@ -93,7 +93,7 @@ def load_stock(code: str):
     hi = df["high"].to_numpy(float)
     lo = df["low"].to_numpy(float)
     cl = df["close"].to_numpy(float)
-    ts = df["date"].to_numpy()
+    ts = df["date"].to_numpy().astype("datetime64[ns]")   # 统一到 ns：us 会让比较常量差 1000 倍
     day = ts.astype("datetime64[D]").astype("int64")
     b = [L.Bar(t=i, high=float(hi[i]), low=float(lo[i]), open=float(opn[i]), close=float(cl[i]))
          for i in range(n)]
@@ -528,7 +528,7 @@ def main() -> int:
                 "is": window_stats(r["eq"], r["cash"], r["trades"], ts_is_start, ts_is_end),
                 "oos": window_stats(r["eq"], r["cash"], r["trades"], ts_oos_start, ts_end),
                 "reject": r["reject"], "filled_buys": r["filled_buys"],
-                "n_trades": len(r["trades"]), "final_equity": r["eq"][-1][1],
+                "n_trades": len(r["trades"]), "final_equity": (r["eq"][-1][1] if r["eq"] else CAPITAL),
                 "trades": r["trades"]}
             a = results[mode][arm]
             print(f"[臂] {mode:12s} {arm} 全段{a['all']['ret']:+.2%} 回撤{a['all']['mdd']:.2%} "
