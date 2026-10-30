@@ -15,54 +15,48 @@ import io
 
 
 def all_codes(limit: int = 0) -> list[str]:
-    """全部 A 股代码（主板/创业板/科创板），剔除 ST、退市、B 股。
+    """全部 A 股代码（剔除 ST、退市、B 股、场内基金）。
 
-    用 baostock 的 query_all_stock 取某一交易日的全部标的，
-    再用 query_stock_basic 过滤类型。取数较慢（约 1 分钟），只在 plan 阶段跑一次。
+    只用 query_all_stock 一次请求：它自带 tradeStatus（1=正常交易）和名称，
+    直接按这两个字段过滤即可，**不要**逐票再查 query_stock_basic——
+    5000 多个代码逐个查会把 plan 阶段拖成几小时（2026-10-30 实测卡死 1 小时）。
     """
     import baostock as bs
     import contextlib
     import io as _io
 
     buf = _io.StringIO()
-    out: list[str] = []
+    codes: list[str] = []
     with contextlib.redirect_stdout(buf):
         lg = bs.login()
         if lg.error_code != "0":
             raise RuntimeError(lg.error_msg)
         try:
             rs = bs.query_all_stock(day="2026-10-29")
-            codes = []
             while rs.error_code == "0" and rs.next():
                 row = rs.get_row_data()
-                code = str(row[0]).split(".")[-1]
-                name = str(row[2]) if len(row) > 2 else ""
+                if len(row) < 3:
+                    continue
+                raw_code, trade_status, name = str(row[0]), str(row[1]), str(row[2])
+                code = raw_code.split(".")[-1]
                 if not (code.isdigit() and len(code) == 6):
                     continue
-                if name.startswith(("ST", "*ST")) or "退" in name:
+                if trade_status != "1":            # 停牌/退市
+                    continue
+                if name.startswith(("ST", "*ST", "PT")) or "退" in name:
                     continue
                 if code.startswith(("200", "900", "51", "15", "16", "58")):
-                    continue          # B 股 / 场内基金
+                    continue                        # B 股 / 场内基金
                 codes.append(code)
-            # 再用 stock_basic 过滤：type=1(股票) 且 status=1(上市)
-            valid = []
-            for code in sorted(set(codes)):
-                prefix = "sh." if code.startswith(("6", "9")) else "sz."
-                rs2 = bs.query_stock_basic(code=prefix + code)
-                row2 = rs2.get_row_data() if rs2.next() else None
-                if not row2:
-                    continue
-                try:
-                    t, st = int(row2[4]), int(row2[5])
-                except Exception:
-                    continue
-                if t == 1 and st == 1:
-                    valid.append(code)
-            codes = valid
         finally:
             bs.logout()
-    out = codes[:limit] if limit else codes
-    return out
+    codes = sorted(set(codes))
+    if limit and limit < len(codes):
+        # 按代码顺序取前 N 只会拿到一堆深市老票（000001~0000xx），样本有偏。
+        # 用固定种子随机抽样，保证可复现且覆盖全市场。
+        import random as _random
+        return sorted(_random.Random(20261030).sample(codes, limit))
+    return codes
 
 
 def hs300_codes(n: int) -> list[str]:
