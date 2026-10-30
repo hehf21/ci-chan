@@ -1,0 +1,158 @@
+name: factor
+
+# 状态量横截面 IC：80 只「不带幸存者偏差」的票池，一票一个 job。
+# 目的：验证 seg_dir（线段方向）在 20 票上看到的 IC≈0.033 是不是样本误差。
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/factor.yml"
+      - "ci/state_one.py"
+      - "ci/merge_factor.py"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  state:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        code:
+          - "000063"
+          - "000333"
+          - "000425"
+          - "000630"
+          - "000651"
+          - "000656"
+          - "000661"
+          - "000703"
+          - "000728"
+          - "000898"
+          - "000938"
+          - "002001"
+          - "002007"
+          - "002008"
+          - "002027"
+          - "002032"
+          - "002050"
+          - "002120"
+          - "002146"
+          - "002304"
+          - "002410"
+          - "002466"
+          - "002468"
+          - "002493"
+          - "002555"
+          - "002558"
+          - "002607"
+          - "002939"
+          - "002958"
+          - "300003"
+          - "300124"
+          - "300347"
+          - "600000"
+          - "600004"
+          - "600019"
+          - "600027"
+          - "600028"
+          - "600048"
+          - "600068"
+          - "600085"
+          - "600100"
+          - "600104"
+          - "600109"
+          - "600176"
+          - "600183"
+          - "600276"
+          - "600340"
+          - "600372"
+          - "600398"
+          - "600436"
+          - "600482"
+          - "600487"
+          - "600535"
+          - "600547"
+          - "600660"
+          - "600663"
+          - "600690"
+          - "600837"
+          - "600928"
+          - "600958"
+          - "600968"
+          - "600977"
+          - "601066"
+          - "601111"
+          - "601211"
+          - "601288"
+          - "601319"
+          - "601336"
+          - "601360"
+          - "601600"
+          - "601601"
+          - "601766"
+          - "601808"
+          - "601888"
+          - "601898"
+          - "601919"
+          - "601989"
+          - "601997"
+          - "603259"
+          - "603260"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: deps
+        run: |
+          python -m pip install --quiet --upgrade pip
+          pip install --quiet -r requirements.txt baostock
+      - name: state ${{ matrix.code }}
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          python ci/state_one.py --code ${{ matrix.code }} 2>&1 | tee "log_${{ matrix.code }}.txt"
+          ls -l ci/_states || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: state-${{ matrix.code }}
+          path: |
+            ci/_states/*.csv.gz
+            log_${{ matrix.code }}.txt
+          if-no-files-found: warn
+
+  merge:
+    needs: state
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: deps
+        run: pip install --quiet -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          path: _art
+          pattern: state-*
+          merge-multiple: true
+      - name: merge
+        run: |
+          ls _art | head -10
+          python ci/merge_factor.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: factor-summary
+          path: |
+            ci/因子-汇总.json
+            ci/因子-汇总.md
+          if-no-files-found: warn
