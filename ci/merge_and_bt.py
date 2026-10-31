@@ -110,6 +110,8 @@ def main() -> int:
     ap.add_argument("--start", default="2020-01-01")
     ap.add_argument("--end", default="2026-10-29")
     ap.add_argument("--trade-start", default="2020-07-01")
+    ap.add_argument("--capital", type=float, default=1000000.0,
+                    help="初始资金（元），默认 100 万")
     ap.add_argument("--max-positions", type=int, default=3,
                     help="同时持仓上限（默认3；调大能把更多信号用起来）")
     ap.add_argument("--max-weight", type=float, default=0.30,
@@ -160,7 +162,7 @@ def main() -> int:
     cfg = dict(BASE_CFG)
     cfg["max_positions"] = a.max_positions
     cfg["max_weight_per_stock"] = a.max_weight
-    res = PB.run(sig, a.freq, a.start, a.end, 1_000_000.0, cfg=cfg, trade_start=a.trade_start)
+    res = PB.run(sig, a.freq, a.start, a.end, float(a.capital), cfg=cfg, trade_start=a.trade_start)
     eq, tr = res["equity"], res["trades"]
     eq["date"] = pd.to_datetime(eq["date"])
     if not tr.empty:
@@ -175,6 +177,7 @@ def main() -> int:
 
     summary = {
         "variant": a.variant,
+        "capital": float(a.capital),
         "signals": int(len(sig)),
         "codes": int(sig["code"].nunique()),
         "kinds": sig["kind"].value_counts().to_dict(),

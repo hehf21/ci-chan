@@ -55,6 +55,11 @@ on:
         required: false
         default: "3000"
         type: string
+      capital:
+        description: "初始资金（元）"
+        required: false
+        default: "1000000"
+        type: string
       max_positions:
         description: "同时持仓上限"
         required: false
@@ -185,7 +190,7 @@ jobs:
           merge-multiple: true
           path: signals_parts
       - name: 合并 + 回测
-        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }} --freq ${{ inputs.freq }} --max-positions ${{ inputs.max_positions }} --max-weight ${{ inputs.max_weight }} ${{ inputs.only_first_zs == 'true' && '--only-first-zs' || '' }} --kinds "${{ inputs.kinds }}" --min-zs-seg ${{ inputs.min_zs_seg }}
+        run: python ci/merge_and_bt.py --variant ${{ inputs.variant }} --start ${{ inputs.start }} --end ${{ inputs.end }} --trade-start ${{ inputs.trade_start }} --freq ${{ inputs.freq }} --capital ${{ inputs.capital }} --max-positions ${{ inputs.max_positions }} --max-weight ${{ inputs.max_weight }} ${{ inputs.only_first_zs == 'true' && '--only-first-zs' || '' }} --kinds "${{ inputs.kinds }}" --min-zs-seg ${{ inputs.min_zs_seg }}
       - uses: actions/upload-artifact@v4
         with:
           name: result-${{ inputs.variant }}-mp${{ inputs.max_positions }}-zs${{ inputs.only_first_zs }}-ma${{ inputs.require_above_ma }}-nest${{ inputs.require_daily_up }}-${{ inputs.kinds }}
