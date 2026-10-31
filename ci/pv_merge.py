@@ -88,7 +88,7 @@ def _spearman(a, b) -> float:
 
 def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                      sign_mode: str = "prior", is_months: int = 36,
-                     cost_bps: float = 0.0) -> dict:
+                     cost_bps: float = 0.0, neutralize: str = "") -> dict:
     """月末调仓回测。
 
     sign_mode:
@@ -99,8 +99,20 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
     p = p[(p["date"] >= pd.Timestamp(d0)) & (p["date"] <= pd.Timestamp(d1))].copy()
     if p.empty:
         return {"error": "区间内无数据"}
+    if neutralize and neutralize in p.columns:
+        p["grp"] = p.groupby("date")[neutralize].transform(
+            lambda s: pd.qcut(s.rank(method="first"), 5, labels=False, duplicates="drop"))
 
     p = zscore_by_date(p, list(FACTORS))
+    if neutralize and neutralize in p.columns:
+        # 风格中性化：把每个 z 因子在该日该组内去均值，剥离组间差异（如大小盘）
+        g = p.groupby(["date", "grp"])
+        for f in FACTORS:
+            col = f + "_z"
+            p[col] = p[col] - g[col].transform("mean")
+        p[list(FACTORS.keys())[0] + "_z"] = p[list(FACTORS.keys())[0] + "_z"].fillna(0.0)
+        for f in FACTORS:
+            p[f + "_z"] = p[f + "_z"].fillna(0.0)
     p["ym"] = p["date"].dt.to_period("M")
 
     # 每票每月的：末收盘价、末因子值、复合分
@@ -193,6 +205,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
         "top": top,
         "sign_mode": sign_mode,
         "cost_bps": cost_bps,
+        "neutralize": neutralize,
         "signs": signs,
         "ret": round(float(eq[-1] - 1) * 100, 2),
         "bench": round(float(bq[-1] - 1) * 100, 2),
@@ -217,6 +230,8 @@ def main() -> int:
     ap.add_argument("--is-months", type=int, default=36, help="定符号用的样本内月数")
     ap.add_argument("--factors", default="",
                     help="只用这些因子，逗号分隔（空=全部）。例：f_mom60,f_mom20,f_rev5")
+    ap.add_argument("--neutralize", default="",
+                    help="按该因子做分组中性化（如 f_amt20：成交额五分组内再排序），空=不中性化")
     ap.add_argument("--cost-bps", type=float, default=0.0,
                     help="每月调仓双边成本（基点，15=0.15%%）")
     a = ap.parse_args()
@@ -235,7 +250,7 @@ def main() -> int:
 
     res = monthly_backtest(p, a.top, a.bt_start, a.end,
                            sign_mode=a.sign_mode, is_months=a.is_months,
-                           cost_bps=a.cost_bps)
+                           cost_bps=a.cost_bps, neutralize=a.neutralize)
     print(json.dumps(res, ensure_ascii=False, indent=1))
 
     os.makedirs(os.path.join(HERE, "out"), exist_ok=True)
