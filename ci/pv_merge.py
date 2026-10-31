@@ -225,6 +225,9 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
         prev_set = set(picks[-1]["_sel"]) if (picks and "_sel" in picks[-1]) else set()
         turnover = 1.0 if not prev_set else (1 - len(prev_set & set(sel)) / max(1, len(sel)))
         cost = (cost_bps / 10000.0) * turnover
+        sel = [c for c in sel if c in fwd.index]        # 保留的票可能当月无价，剔除
+        if not sel:
+            continue
         base_ret = float(fwd[sel].mean()) - cost
 
         # ---- 择时覆盖层 ----
