@@ -1,0 +1,135 @@
+name: pvlive
+
+# 实盘月度清单：全市场分块算因子 → 生成本期买入/卖出/保留清单
+# 分块是为了突破 GitHub Actions 矩阵 256 job 上限（全 A 约 5000 只，按每块 120 只分约 42 块）
+
+on:
+  workflow_dispatch:
+    inputs:
+      chunk:
+        description: "每块多少只票（越大越少 job、单 job 越慢）"
+        required: false
+        default: "120"
+        type: string
+      capital:
+        description: "本金（元）"
+        required: false
+        default: "500000"
+        type: string
+      top:
+        description: "持仓只数"
+        required: false
+        default: "50"
+        type: string
+      adaptive_style:
+        description: "风格自适应窗口（月，0=关）"
+        required: false
+        default: "3"
+        type: string
+      hold_min:
+        description: "换手抑制：最短持有月数"
+        required: false
+        default: "3"
+        type: string
+      hold_rank:
+        description: "换手抑制：排名前 M 保留"
+        required: false
+        default: "100"
+        type: string
+      start:
+        description: "取数起点"
+        required: false
+        default: "2015-01-01"
+        type: string
+      end:
+        description: "取数终点（最新交易日）"
+        required: false
+        default: "2026-10-30"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+      total: ${{ steps.m.outputs.total }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - id: m
+        run: |
+          set -e
+          CODES=$(python ci/universe.py --all --n 0)
+          echo "total=$(echo "$CODES" | tr ',' '\n' | wc -l)"
+          python3 - "$CODES" "${{ inputs.chunk }}" > chunks.json <<'PY'
+import json, sys
+codes = [c for c in sys.argv[1].split(',') if c]
+size = int(sys.argv[2])
+print(json.dumps([",".join(codes[i:i+size]) for i in range(0, len(codes), size)]))
+PY
+          echo "matrix=$(cat chunks.json)" >> "$GITHUB_OUTPUT"
+
+  calc:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        chunk: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - name: 分块算因子
+        run: |
+          set -e
+          IFS=',' read -ra ARR <<< "${{ matrix.chunk }}"
+          for c in "${ARR[@]}"; do
+            python ci/pv_one.py --code "$c" --start ${{ inputs.start }} \
+              --end ${{ inputs.end }} --outdir pv_parts || true
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pvchunk-${{ strategy.job-index }}
+          path: pv_parts/
+          if-no-files-found: error
+
+  analyze:
+    needs: calc
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pvchunk-*
+          merge-multiple: true
+          path: pv_parts
+      - name: 生成本期清单
+        run: |
+          python ci/signal_now.py --capital ${{ inputs.capital }} --top ${{ inputs.top }} \
+            --adaptive-style ${{ inputs.adaptive_style }} \
+            --hold-min ${{ inputs.hold_min }} --hold-rank ${{ inputs.hold_rank }} \
+            --end ${{ inputs.end }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: live-list
+          path: |
+            out/live_target.csv
+            out/live_actions.csv
+            out/live_summary.json
+          if-no-files-found: error
