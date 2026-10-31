@@ -50,6 +50,8 @@ def main() -> int:
     ap.add_argument("--start", default="2013-01-01")
     ap.add_argument("--end", default="2026-10-30")
     ap.add_argument("--outdir", default="pit")
+    ap.add_argument("--freq", default="Q", choices=["M", "Q"],
+                    help="采样频率：M=逐月（慢）/ Q=逐季（快 3 倍，回测按月映射到最近季度）")
     a = ap.parse_args()
 
     buf = io.StringIO()
@@ -59,8 +61,9 @@ def main() -> int:
         raise SystemExit(f"login failed: {lg.error_msg}")
 
     # 月末采样：每月最后一个自然日去查（baostock 会返回该日之前最近交易日的快照）
+    freq = a.freq
     months = pd.period_range(pd.Timestamp(a.start).to_period("M"),
-                             pd.Timestamp(a.end).to_period("M"), freq="M")
+                             pd.Timestamp(a.end).to_period("M"), freq=freq)
     rows = []
     try:
         for mp in months:
@@ -92,7 +95,8 @@ def main() -> int:
                     continue
                 c = _clean(raw_code, name)
                 if c:
-                    rows.append((str(mp), c))
+                    _lab = str(mp) if freq == "M" else f"{mp.year}Q{mp.quarter}"
+                    rows.append((_lab, c))
                     seen += 1
             print(f"{mp} ({day}): {seen} 只", file=sys.stderr)
     finally:

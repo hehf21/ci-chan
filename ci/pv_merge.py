@@ -443,7 +443,9 @@ def main() -> int:
         pit = pd.read_csv(a.pit_file, dtype={"code": str})
         pit["code"] = pit["code"].astype(str).str.zfill(6)
         pit["ym"] = pit["ym"].astype(str)
-        p["ym_s"] = p["date"].dt.to_period("M").astype(str)
+        _p = p["date"].dt.to_period("M")
+        _is_q = bool(pit["ym"].astype(str).str.contains("Q").any())
+        p["ym_s"] = [f"{x.year}Q{x.quarter}" if _is_q else str(x) for x in _p]
         before = len(p)
         p = p.merge(pit.rename(columns={"ym": "ym_s"}), on=["ym_s", "code"], how="inner")
         p = p.drop(columns=["ym_s"])
