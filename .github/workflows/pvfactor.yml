@@ -46,6 +46,16 @@ on:
         required: false
         default: ""
         type: string
+      timing:
+        description: "择时：none / bench_ma（基准趋势向下空仓）/ strat_ma（策略自身向下空仓）"
+        required: false
+        default: "none"
+        type: string
+      timing_win:
+        description: "择时回看月数"
+        required: false
+        default: "3"
+        type: string
       neutralize:
         description: "风格中性化：按该因子五分组内排序（如 f_amt20），空=不中性化"
         required: false
@@ -128,7 +138,8 @@ jobs:
           python ci/pv_merge.py --top ${{ inputs.top }} --bt-start ${{ inputs.bt_start }} \
             --end ${{ inputs.end }} --sign-mode ${{ inputs.sign_mode }} --is-months ${{ inputs.is_months }} \
             --factors "${{ inputs.factors }}" --cost-bps ${{ inputs.cost_bps }} \
-            --neutralize "${{ inputs.neutralize }}"
+            --neutralize "${{ inputs.neutralize }}" \
+            --timing ${{ inputs.timing }} --timing-win ${{ inputs.timing_win }}
       - uses: actions/upload-artifact@v4
         with:
           name: pv-result

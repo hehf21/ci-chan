@@ -88,7 +88,8 @@ def _spearman(a, b) -> float:
 
 def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                      sign_mode: str = "prior", is_months: int = 36,
-                     cost_bps: float = 0.0, neutralize: str = "") -> dict:
+                     cost_bps: float = 0.0, neutralize: str = "",
+                     timing: str = "none", timing_win: int = 3) -> dict:
     """月末调仓回测。
 
     sign_mode:
@@ -165,6 +166,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
 
     # ---- 组合 ----
     rets, bench, picks = [], [], []
+    cash_months = 0
     for r in trade_rows:
         cur, base, fwd = r["ym"], r["base"], r["fwd"]
         score = None
@@ -176,7 +178,16 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
         prev = set(picks[-1]["picks"]) if picks and "all_picks" in picks[-1] else set()
         turnover = 1.0 if not prev else (1 - len(prev & set(sel)) / max(1, len(sel)))
         cost = (cost_bps / 10000.0) * turnover
-        rets.append(float(fwd[sel].mean()) - cost)
+        base_ret = float(fwd[sel].mean()) - cost
+
+        # ---- 择时覆盖层 ----
+        # 依据：过去 timing_win 个月的滚动表现，若为负则空仓（收益 0，省掉成本）
+        if timing != "none" and len(rets) >= timing_win:
+            hist = bench[-timing_win:] if timing == "bench_ma" else rets[-timing_win:]
+            if float(np.sum(hist)) < 0:
+                base_ret = 0.0
+                cash_months += 1
+        rets.append(base_ret)
         bench.append(float(fwd.mean()))
         picks.append({"month": str(cur), "ret": round(rets[-1] * 100, 2),
                       "bench": round(bench[-1] * 100, 2),
@@ -206,11 +217,14 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
         "sign_mode": sign_mode,
         "cost_bps": cost_bps,
         "neutralize": neutralize,
+        "timing": timing,
+        "timing_win": timing_win,
         "signs": signs,
         "ret": round(float(eq[-1] - 1) * 100, 2),
         "bench": round(float(bq[-1] - 1) * 100, 2),
         "excess": round(float((eq[-1] - 1) - (bq[-1] - 1)) * 100, 2),
         "dd": round(dd * 100, 2),
+        "cash_months": int(cash_months),
         "win_months": round(float(np.mean([1 if x > 0 else 0 for x in rets])) * 100, 1),
         "bench_win_months": round(float(np.mean([1 if x > 0 else 0 for x in bench])) * 100, 1),
         "avg_month": round(float(np.mean(rets)) * 100, 2),
@@ -230,6 +244,10 @@ def main() -> int:
     ap.add_argument("--is-months", type=int, default=36, help="定符号用的样本内月数")
     ap.add_argument("--factors", default="",
                     help="只用这些因子，逗号分隔（空=全部）。例：f_mom60,f_mom20,f_rev5")
+    ap.add_argument("--timing", default="none",
+                    choices=["none", "bench_ma", "strat_ma"],
+                    help="择时：none=不择时 / bench_ma=基准趋势向下时空仓 / strat_ma=策略自身趋势向下时空仓")
+    ap.add_argument("--timing-win", type=int, default=3, help="择时回看月数")
     ap.add_argument("--neutralize", default="",
                     help="按该因子做分组中性化（如 f_amt20：成交额五分组内再排序），空=不中性化")
     ap.add_argument("--cost-bps", type=float, default=0.0,
@@ -250,7 +268,8 @@ def main() -> int:
 
     res = monthly_backtest(p, a.top, a.bt_start, a.end,
                            sign_mode=a.sign_mode, is_months=a.is_months,
-                           cost_bps=a.cost_bps, neutralize=a.neutralize)
+                           cost_bps=a.cost_bps, neutralize=a.neutralize,
+                           timing=a.timing, timing_win=a.timing_win)
     print(json.dumps(res, ensure_ascii=False, indent=1))
 
     os.makedirs(os.path.join(HERE, "out"), exist_ok=True)
