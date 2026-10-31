@@ -209,17 +209,28 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
             cur_px = last_px[cur]
             w = 1.0 / max(1, len(sel))
             # 卖出：上期持有、本期不在名单
+            def _rec(c, side):
+                px = float(cur_px.get(c, float("nan")))
+                if px != px or px <= 0:
+                    return None
+                budget = equity * w
+                sh = int(budget / px / 100) * 100        # A 股最小 100 股
+                if sh <= 0:
+                    return None                          # 钱不够买一手，跳过（真实约束）
+                amt = sh * px
+                comm = max(5.0, amt * 0.00025)           # 佣金万2.5，最低5元
+                stamp = amt * 0.0005 if side == "卖出" else 0.0
+                return {"月份": str(cur), "代码": c, "方向": side,
+                        "价格": round(px, 3), "股数": sh, "金额": round(amt, 2),
+                        "佣金": round(comm, 2), "印花税": round(stamp, 2),
+                        "权重%": round(w * 100, 1),
+                        "账户总值": round(equity, 0)}
             for c in sorted(prev - set(sel)):
-                px = float(cur_px.get(c, float("nan")))
-                if px == px:
-                    trades.append({"月份": str(cur), "代码": c, "方向": "卖出",
-                                   "价格": round(px, 3), "权重%": round(w * 100, 1)})
-            # 买入：本期新进名单
+                r = _rec(c, "卖出")
+                if r: trades.append(r)
             for c in sorted(set(sel) - prev):
-                px = float(cur_px.get(c, float("nan")))
-                if px == px:
-                    trades.append({"月份": str(cur), "代码": c, "方向": "买入",
-                                   "价格": round(px, 3), "权重%": round(w * 100, 1)})
+                r = _rec(c, "买入")
+                if r: trades.append(r)
             prev = set(sel)
             equity *= (1 + r["ret"] / 100.0)
 
