@@ -46,6 +46,21 @@ on:
         required: false
         default: ""
         type: string
+      hold_min:
+        description: "换手抑制：持有满 N 个月才允许因排名掉出而卖（0=关）"
+        required: false
+        default: "0"
+        type: string
+      hold_rank:
+        description: "换手抑制：排名仍在前 M 名则保留（0=不用）"
+        required: false
+        default: "0"
+        type: string
+      struct_gate:
+        description: "换手抑制：未跌破近 N 日最低则保留（0=不用）"
+        required: false
+        default: "0"
+        type: string
       capital:
         description: "初始资金（元）；>0 会输出逐笔调仓明细"
         required: false
@@ -145,7 +160,9 @@ jobs:
             --factors "${{ inputs.factors }}" --cost-bps ${{ inputs.cost_bps }} \
             --neutralize "${{ inputs.neutralize }}" \
             --timing ${{ inputs.timing }} --timing-win ${{ inputs.timing_win }} \
-            --capital ${{ inputs.capital }}
+            --capital ${{ inputs.capital }} \
+            --hold-min ${{ inputs.hold_min }} --hold-rank ${{ inputs.hold_rank }} \
+            --struct-gate ${{ inputs.struct_gate }}
       - uses: actions/upload-artifact@v4
         with:
           name: pv-result

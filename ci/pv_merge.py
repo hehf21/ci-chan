@@ -93,7 +93,9 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                      sign_mode: str = "prior", is_months: int = 36,
                      cost_bps: float = 0.0, neutralize: str = "",
                      timing: str = "none", timing_win: int = 3,
-                     capital: float = 0.0) -> dict:
+                     capital: float = 0.0,
+                     hold_min: int = 0, hold_rank: int = 0,
+                     struct_gate: int = 0) -> dict:
     """月末调仓回测。
 
     sign_mode:
@@ -108,6 +110,11 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
         p["grp"] = p.groupby("date")[neutralize].transform(
             lambda s: pd.qcut(s.rank(method="first"), 5, labels=False, duplicates="drop"))
 
+    if struct_gate and struct_gate > 0:
+        p = p.sort_values(["code", "date"])
+        p["low_gate"] = (p.groupby("code")["close"]
+                         .transform(lambda x: x.rolling(int(struct_gate), min_periods=5).min()))
+        p = p.sort_values(["date", "code"])
     p = zscore_by_date(p, list(FACTORS))
     if neutralize and neutralize in p.columns:
         # 风格中性化：把每个 z 因子在该日该组内去均值，剥离组间差异（如大小盘）
@@ -125,6 +132,9 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
     last_px = p_sorted.groupby(["code", "ym"])["close"].last().unstack("ym")
     last_f = {f: p_sorted.groupby(["code", "ym"])[f].last().unstack("ym") for f in FACTORS}
     last_z = {f: p_sorted.groupby(["code", "ym"])[f + "_z"].last().unstack("ym") for f in FACTORS}
+    last_low = (p_sorted.groupby(["code", "ym"])["low_gate"].last().unstack("ym")
+                if "low_gate" in p_sorted.columns else None)
+    last_close = last_px
 
     yms = sorted(p["ym"].unique())
     if len(yms) < 3:
@@ -171,16 +181,49 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
     # ---- 组合 ----
     rets, bench, picks = [], [], []
     cash_months = 0
+    prev_hold: set = set()
+    held_months: dict = {}
+    cc_map = {str(cc): cc for cc in last_px.columns}
     for r in trade_rows:
         cur, base, fwd = r["ym"], r["base"], r["fwd"]
         score = None
         for f in FACTORS:
             z = last_z[f][cur].reindex(base).fillna(0.0) * signs[f]
             score = z if score is None else score + z
-        sel = score.nlargest(min(top, len(score))).index
-        # 换手成本：按与上期持仓的重叠度估算（近似：全换时扣 cost_bps）
-        prev = set(picks[-1]["picks"]) if picks and "all_picks" in picks[-1] else set()
-        turnover = 1.0 if not prev else (1 - len(prev & set(sel)) / max(1, len(sel)))
+        _ranked = score.sort_values(ascending=False)
+        sel = list(_ranked.nlargest(min(top, len(score))).index)
+
+        # ---- 换手抑制：掉出名单的持仓，满足条件就不卖 ----
+        if (hold_min or hold_rank or struct_gate) and prev_hold:
+            keep = []
+            for c in prev_hold:
+                if c in sel:
+                    continue
+                ok = True
+                # 条件1：必须持有满 N 个月，才有资格“因排名保留”
+                if hold_min and held_months.get(c, 0) < hold_min:
+                    ok = False
+                # 条件2：排名仍在前 M 名
+                if ok and hold_rank:
+                    ok = (c in _ranked.index and int(_ranked.index.get_loc(c)) + 1 <= hold_rank)
+                # 条件3：结构没坏（收盘未跌破近 N 日最低）
+                if ok and struct_gate and last_low is not None:
+                    try:
+                        _col = cc_map[str(cur)]
+                        low = float(last_low[_col].get(c, float("nan")))
+                        px = float(last_px[_col].get(c, float("nan")))
+                        ok = (low == low and px == px and px >= low)
+                    except Exception:
+                        ok = False
+                if ok:
+                    keep.append(c)
+            for c in keep:
+                if c not in sel:
+                    sel.append(c)
+
+        # 换手成本：按与上期持仓的重叠度估算
+        prev_set = set(picks[-1]["_sel"]) if (picks and "_sel" in picks[-1]) else set()
+        turnover = 1.0 if not prev_set else (1 - len(prev_set & set(sel)) / max(1, len(sel)))
         cost = (cost_bps / 10000.0) * turnover
         base_ret = float(fwd[sel].mean()) - cost
 
@@ -192,6 +235,14 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                 base_ret = 0.0
                 cash_months += 1
         rets.append(base_ret)
+        # 更新持有期计数
+        _sel_now = set(sel)
+        for c in _sel_now:
+            held_months[c] = held_months.get(c, 0) + 1
+        for c in list(held_months):
+            if c not in _sel_now:
+                held_months.pop(c, None)
+        prev_hold = _sel_now
         bench.append(float(fwd.mean()))
         picks.append({"month": str(cur), "ym": str(cur), "ret": round(rets[-1] * 100, 2),
                       "bench": round(bench[-1] * 100, 2),
@@ -294,6 +345,12 @@ def main() -> int:
     ap.add_argument("--is-months", type=int, default=36, help="定符号用的样本内月数")
     ap.add_argument("--factors", default="",
                     help="只用这些因子，逗号分隔（空=全部）。例：f_mom60,f_mom20,f_rev5")
+    ap.add_argument("--hold-min", type=int, default=0,
+                    help="换手抑制：持有满 N 个月才允许因排名掉出而卖出（0=关）")
+    ap.add_argument("--hold-rank", type=int, default=0,
+                    help="换手抑制：排名仍在前 M 名则保留（0=不用该条）")
+    ap.add_argument("--struct-gate", type=int, default=0,
+                    help="换手抑制：收盘未跌破近 N 日最低（次级别低点未破=结构没坏）则保留（0=关）")
     ap.add_argument("--capital", type=float, default=0.0,
                     help="初始资金（元）；>0 时额外输出逐笔调仓明细（含股数与金额）")
     ap.add_argument("--timing", default="none",
@@ -322,7 +379,9 @@ def main() -> int:
                            sign_mode=a.sign_mode, is_months=a.is_months,
                            cost_bps=a.cost_bps, neutralize=a.neutralize,
                            timing=a.timing, timing_win=a.timing_win,
-                           capital=a.capital)
+                           capital=a.capital,
+                           hold_min=a.hold_min, hold_rank=a.hold_rank,
+                           struct_gate=a.struct_gate)
     print(json.dumps(res, ensure_ascii=False, indent=1))
 
     os.makedirs(os.path.join(HERE, "out"), exist_ok=True)
