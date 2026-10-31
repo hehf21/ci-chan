@@ -224,7 +224,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                 amt = sh * px
                 comm = max(5.0, amt * 0.00025)           # 佣金万2.5，最低5元
                 stamp = amt * 0.0005 if side == "卖出" else 0.0
-                return {"月份": str(cur), "代码": c, "方向": side,
+                return {"月份": cur_s, "代码": c, "方向": side,
                         "价格": round(px, 3), "股数": sh, "金额": round(amt, 2),
                         "佣金": round(comm, 2), "印花税": round(stamp, 2),
                         "权重%": round(w * 100, 1), "账户总值": round(equity, 0)}
