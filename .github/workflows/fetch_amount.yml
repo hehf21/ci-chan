@@ -1,0 +1,57 @@
+name: fetch-amount
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: 起始日期
+        default: "2010-01-01"
+      end:
+        description: 结束日期
+        default: "2026-10-30"
+      shards:
+        description: 分片数
+        default: "60"
+
+jobs:
+  prep:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+    steps:
+      - id: m
+        run: |
+          python - <<'PY' >> $GITHUB_OUTPUT
+          n = int("${{ github.event.inputs.shards }}")
+          import json
+          print("matrix=" + json.dumps(list(range(n))))
+          PY
+
+  fetch:
+    needs: prep
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ${{ fromJSON(needs.prep.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install baostock pandas
+      - name: fetch shard ${{ matrix.shard }}
+        run: |
+          python ci/fetch_amount.py \
+            --shard ${{ matrix.shard }} \
+            --shards ${{ github.event.inputs.shards }} \
+            --start ${{ github.event.inputs.start }} \
+            --end ${{ github.event.inputs.end }} \
+            --out out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: amt-${{ matrix.shard }}
+          path: out
+          retention-days: 7
+          if-no-files-found: warn
