@@ -200,39 +200,44 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
 
     # ---- 逐笔调仓明细（本金 capital>0 时）----
     trades = []
-    if capital and capital > 0 and len(picks) == len(rets):
+    if capital and capital > 0:
         equity = capital
         prev = set()
-        for mm, r in zip(picks, rets):
-            cur = r["ym"]
-            sel = r.get("_sel") or []
+        for pk, ret_ in zip(picks, rets):
+            cur = pk["ym"]
+            sel = pk.get("_sel") or []
             cur_px = last_px[cur]
             w = 1.0 / max(1, len(sel))
-            # 卖出：上期持有、本期不在名单
+
             def _rec(c, side):
-                px = float(cur_px.get(c, float("nan")))
+                try:
+                    px = float(cur_px.get(c, float("nan")))
+                except Exception:
+                    return None
                 if px != px or px <= 0:
                     return None
                 budget = equity * w
                 sh = int(budget / px / 100) * 100        # A 股最小 100 股
                 if sh <= 0:
-                    return None                          # 钱不够买一手，跳过（真实约束）
+                    return None                          # 买不起一手，跳过（真实约束）
                 amt = sh * px
                 comm = max(5.0, amt * 0.00025)           # 佣金万2.5，最低5元
                 stamp = amt * 0.0005 if side == "卖出" else 0.0
                 return {"月份": str(cur), "代码": c, "方向": side,
                         "价格": round(px, 3), "股数": sh, "金额": round(amt, 2),
                         "佣金": round(comm, 2), "印花税": round(stamp, 2),
-                        "权重%": round(w * 100, 1),
-                        "账户总值": round(equity, 0)}
+                        "权重%": round(w * 100, 1), "账户总值": round(equity, 0)}
+
             for c in sorted(prev - set(sel)):
-                r = _rec(c, "卖出")
-                if r: trades.append(r)
+                r_ = _rec(c, "卖出")
+                if r_:
+                    trades.append(r_)
             for c in sorted(set(sel) - prev):
-                r = _rec(c, "买入")
-                if r: trades.append(r)
+                r_ = _rec(c, "买入")
+                if r_:
+                    trades.append(r_)
             prev = set(sel)
-            equity *= (1 + r["ret"] / 100.0)
+            equity *= (1 + ret_ / 100.0)
 
     eq = np.cumprod([1 + x for x in rets])
     bq = np.cumprod([1 + x for x in bench])
