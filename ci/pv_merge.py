@@ -73,6 +73,19 @@ def zscore_by_date(p: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     return out
 
 
+
+
+def _spearman(a, b) -> float:
+    """秩相关，不依赖 scipy（pandas 的 corr(method="spearman") 需要 scipy）。"""
+    try:
+        ra = pd.Series(a).rank()
+        rb = pd.Series(b).rank()
+        if ra.std() == 0 or rb.std() == 0:
+            return float("nan")
+        return float(ra.corr(rb))
+    except Exception:
+        return float("nan")
+
 def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                      sign_mode: str = "prior", is_months: int = 36) -> dict:
     """月末调仓回测。
@@ -114,7 +127,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
             fv = last_f[f][cur].reindex(base)
             ok = fv.notna()
             if ok.sum() > 10:
-                ics[f] = float(pd.Series(fv[ok]).corr(pd.Series(fwd[ok]), method="spearman"))
+                ics[f] = _spearman(fv[ok].values, fwd[ok].values)
         row["ic"] = ics
         month_rows.append(row)
 
