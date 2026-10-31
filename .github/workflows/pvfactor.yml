@@ -46,6 +46,11 @@ on:
         required: false
         default: ""
         type: string
+      capital:
+        description: "初始资金（元）；>0 会输出逐笔调仓明细"
+        required: false
+        default: "0"
+        type: string
       timing:
         description: "择时：none / bench_ma（基准趋势向下空仓）/ strat_ma（策略自身向下空仓）"
         required: false
@@ -139,9 +144,12 @@ jobs:
             --end ${{ inputs.end }} --sign-mode ${{ inputs.sign_mode }} --is-months ${{ inputs.is_months }} \
             --factors "${{ inputs.factors }}" --cost-bps ${{ inputs.cost_bps }} \
             --neutralize "${{ inputs.neutralize }}" \
-            --timing ${{ inputs.timing }} --timing-win ${{ inputs.timing_win }}
+            --timing ${{ inputs.timing }} --timing-win ${{ inputs.timing_win }} \
+            --capital ${{ inputs.capital }}
       - uses: actions/upload-artifact@v4
         with:
           name: pv-result
-          path: out/pv_*.json
+          path: |
+            out/pv_*.json
+            out/pv_trades.csv
           if-no-files-found: error

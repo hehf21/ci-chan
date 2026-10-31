@@ -31,6 +31,9 @@ import pandas as pd
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE)
 
+_RES_TRADES: list = []
+
+
 FACTORS = {
     "f_mom60": +1,
     "f_mom20": +1,
@@ -89,7 +92,8 @@ def _spearman(a, b) -> float:
 def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                      sign_mode: str = "prior", is_months: int = 36,
                      cost_bps: float = 0.0, neutralize: str = "",
-                     timing: str = "none", timing_win: int = 3) -> dict:
+                     timing: str = "none", timing_win: int = 3,
+                     capital: float = 0.0) -> dict:
     """月末调仓回测。
 
     sign_mode:
@@ -191,7 +195,33 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
         bench.append(float(fwd.mean()))
         picks.append({"month": str(cur), "ret": round(rets[-1] * 100, 2),
                       "bench": round(bench[-1] * 100, 2),
-                      "picks": list(sel[:8]), "all_picks": list(sel)})
+                      "picks": list(sel[:8]), "all_picks": list(sel),
+                      "_sel": list(sel)})
+
+    # ---- 逐笔调仓明细（本金 capital>0 时）----
+    trades = []
+    if capital and capital > 0 and len(picks) == len(rets):
+        equity = capital
+        prev = set()
+        for mm, r in zip(picks, rets):
+            cur = r["ym"]
+            sel = r.get("_sel") or []
+            cur_px = last_px[cur]
+            w = 1.0 / max(1, len(sel))
+            # 卖出：上期持有、本期不在名单
+            for c in sorted(prev - set(sel)):
+                px = float(cur_px.get(c, float("nan")))
+                if px == px:
+                    trades.append({"月份": str(cur), "代码": c, "方向": "卖出",
+                                   "价格": round(px, 3), "权重%": round(w * 100, 1)})
+            # 买入：本期新进名单
+            for c in sorted(set(sel) - prev):
+                px = float(cur_px.get(c, float("nan")))
+                if px == px:
+                    trades.append({"月份": str(cur), "代码": c, "方向": "买入",
+                                   "价格": round(px, 3), "权重%": round(w * 100, 1)})
+            prev = set(sel)
+            equity *= (1 + r["ret"] / 100.0)
 
     eq = np.cumprod([1 + x for x in rets])
     bq = np.cumprod([1 + x for x in bench])
@@ -210,6 +240,8 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                 "n": int(len(arr)),
             }
 
+    _RES_TRADES.clear()
+    _RES_TRADES.extend(trades)
     return {
         "months_oos": len(rets),
         "months_total": len(month_rows),
@@ -230,6 +262,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
         "avg_month": round(float(np.mean(rets)) * 100, 2),
         "avg_bench_month": round(float(np.mean(bench)) * 100, 2),
         "ic": ic_summary,
+        "trades_dumped": len(trades),
         "last_picks": picks[-3:],
     }
 
@@ -244,6 +277,8 @@ def main() -> int:
     ap.add_argument("--is-months", type=int, default=36, help="定符号用的样本内月数")
     ap.add_argument("--factors", default="",
                     help="只用这些因子，逗号分隔（空=全部）。例：f_mom60,f_mom20,f_rev5")
+    ap.add_argument("--capital", type=float, default=0.0,
+                    help="初始资金（元）；>0 时额外输出逐笔调仓明细（含股数与金额）")
     ap.add_argument("--timing", default="none",
                     choices=["none", "bench_ma", "strat_ma"],
                     help="择时：none=不择时 / bench_ma=基准趋势向下时空仓 / strat_ma=策略自身趋势向下时空仓")
@@ -269,12 +304,19 @@ def main() -> int:
     res = monthly_backtest(p, a.top, a.bt_start, a.end,
                            sign_mode=a.sign_mode, is_months=a.is_months,
                            cost_bps=a.cost_bps, neutralize=a.neutralize,
-                           timing=a.timing, timing_win=a.timing_win)
+                           timing=a.timing, timing_win=a.timing_win,
+                           capital=a.capital)
     print(json.dumps(res, ensure_ascii=False, indent=1))
 
     os.makedirs(os.path.join(HERE, "out"), exist_ok=True)
     with open(os.path.join(HERE, "out", f"pv_top{a.top}.json"), "w", encoding="utf-8") as f:
         json.dump(res, f, ensure_ascii=False, indent=1)
+
+    if _RES_TRADES:
+        td = pd.DataFrame(_RES_TRADES)
+        td.to_csv(os.path.join(HERE, "out", "pv_trades.csv"),
+                  index=False, encoding="utf-8-sig")
+        print(f"逐笔明细 {len(td)} 行 -> out/pv_trades.csv")
     return 0
 
 
