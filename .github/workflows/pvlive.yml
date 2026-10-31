@@ -66,13 +66,8 @@ jobs:
         run: |
           set -e
           CODES=$(python ci/universe.py --all --n 0)
-          echo "total=$(echo "$CODES" | tr ',' '\n' | wc -l)"
-          python3 - "$CODES" "${{ inputs.chunk }}" > chunks.json <<'PY'
-import json, sys
-codes = [c for c in sys.argv[1].split(',') if c]
-size = int(sys.argv[2])
-print(json.dumps([",".join(codes[i:i+size]) for i in range(0, len(codes), size)]))
-PY
+          echo "total=$(echo "$CODES" | tr ',' '\n' | wc -l)" >> "$GITHUB_OUTPUT"
+          python ci/make_chunks.py --size ${{ inputs.chunk }} --codes "$CODES" > chunks.json
           echo "matrix=$(cat chunks.json)" >> "$GITHUB_OUTPUT"
 
   calc:
