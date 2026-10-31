@@ -193,7 +193,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                 cash_months += 1
         rets.append(base_ret)
         bench.append(float(fwd.mean()))
-        picks.append({"month": str(cur), "ret": round(rets[-1] * 100, 2),
+        picks.append({"month": str(cur), "ym": cur, "ret": round(rets[-1] * 100, 2),
                       "bench": round(bench[-1] * 100, 2),
                       "picks": list(sel[:8]), "all_picks": list(sel),
                       "_sel": list(sel)})
@@ -204,7 +204,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
         equity = capital
         prev = set()
         for pk, ret_ in zip(picks, rets):
-            cur = pk["ym"]
+            cur = pk.get("ym") or pk["month"]
             sel = pk.get("_sel") or []
             cur_px = last_px[cur]
             w = 1.0 / max(1, len(sel))
