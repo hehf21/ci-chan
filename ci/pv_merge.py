@@ -417,6 +417,8 @@ def main() -> int:
                     help="结构判定：proxy=近N日最低 / chan=真缠论日线结构（需 chan_parts）")
     ap.add_argument("--struct-gate", type=int, default=0,
                     help="换手抑制：收盘未跌破近 N 日最低（次级别低点未破=结构没坏）则保留（0=关）")
+    ap.add_argument("--pit-file", default="",
+                    help="point-in-time 成员表（pit/pit_membership.csv.gz）；给了就只保留当时真实在交易的票")
     ap.add_argument("--capital", type=float, default=0.0,
                     help="初始资金（元）；>0 时额外输出逐笔调仓明细（含股数与金额）")
     ap.add_argument("--timing", default="none",
@@ -437,6 +439,16 @@ def main() -> int:
         print(f"只用因子：{sorted(FACTORS)}")
 
     p = load_panel()
+    if a.pit_file and os.path.exists(a.pit_file):
+        pit = pd.read_csv(a.pit_file, dtype={"code": str})
+        pit["code"] = pit["code"].astype(str).str.zfill(6)
+        pit["ym"] = pit["ym"].astype(str)
+        p["ym_s"] = p["date"].dt.to_period("M").astype(str)
+        before = len(p)
+        p = p.merge(pit.rename(columns={"ym": "ym_s"}), on=["ym_s", "code"], how="inner")
+        p = p.drop(columns=["ym_s"])
+        print(f"[PIT 过滤] {before} -> {len(p)} 行；"
+              f"票数 {p['code'].nunique()}；这会剔除当时未上市/已退市的样本")
     print(f"面板：{len(p)} 行，{p['code'].nunique() if len(p) else 0} 只票")
     if p.empty:
         raise SystemExit("没有 pv_parts 数据")

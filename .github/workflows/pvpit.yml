@@ -1,0 +1,153 @@
+name: pvpit
+
+# 机构级口径回测：point-in-time 股票池 + 分块全量取数 + 按当时成员过滤
+# 与 pvfactor 的区别：pvfactor 用「今天还在上市」的随机样本；本流水线用「当时真实在交易」的全量标的
+
+on:
+  workflow_dispatch:
+    inputs:
+      top:
+        description: "持仓只数"
+        required: false
+        default: "50"
+        type: string
+      chunk:
+        description: "每块多少只票"
+        required: false
+        default: "100"
+        type: string
+      start:
+        description: "PIT 起算月"
+        required: false
+        default: "2013-01-01"
+        type: string
+      end:
+        description: "终点"
+        required: false
+        default: "2026-10-30"
+        type: string
+      bt_start:
+        description: "回测起点"
+        required: false
+        default: "2015-01-01"
+        type: string
+      is_months:
+        description: "样本内月数（定符号）"
+        required: false
+        default: "36"
+        type: string
+      adaptive_style:
+        description: "风格自适应窗口（月，0=关）"
+        required: false
+        default: "3"
+        type: string
+      hold_min:
+        description: "换手抑制最短持有月数"
+        required: false
+        default: "3"
+        type: string
+      hold_rank:
+        description: "换手抑制保留排名"
+        required: false
+        default: "100"
+        type: string
+      cost_bps:
+        description: "每月调仓成本（基点）"
+        required: false
+        default: "15"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    outputs:
+      matrix: ${{ steps.m.outputs.matrix }}
+      codes_n: ${{ steps.m.outputs.codes_n }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - name: 建 point-in-time 股票池
+        run: python ci/pit_universe.py --start ${{ inputs.start }} --end ${{ inputs.end }} --outdir pit
+      - id: m
+        run: |
+          CODES=$(cat pit/pit_codes.txt)
+          echo "codes_n=$(echo "$CODES" | tr ',' '\n' | wc -l)" >> "$GITHUB_OUTPUT"
+          python ci/make_chunks.py --size ${{ inputs.chunk }} --codes "$CODES" > chunks.json
+          echo "matrix=$(cat chunks.json)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pit-table
+          path: |
+            pit/pit_membership.csv.gz
+            pit/pit_codes.txt
+          if-no-files-found: error
+
+  calc:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        chunk: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - name: 分块取数算因子
+        run: |
+          set -e
+          IFS=',' read -ra ARR <<< "${{ matrix.chunk }}"
+          for c in "${ARR[@]}"; do
+            python ci/pv_one.py --code "$c" --start 2006-01-01 \
+              --end ${{ inputs.end }} --outdir pv_parts || true
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pvchunk-${{ strategy.job-index }}
+          path: pv_parts/
+          if-no-files-found: error
+
+  analyze:
+    needs: calc
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt baostock
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pvchunk-*
+          merge-multiple: true
+          path: pv_parts
+      - uses: actions/download-artifact@v4
+        with:
+          name: pit-table
+          path: pit
+      - name: PIT 口径回测
+        run: |
+          python ci/pv_merge.py --top ${{ inputs.top }} \
+            --bt-start ${{ inputs.bt_start }} --end ${{ inputs.end }} \
+            --sign-mode ic --is-months ${{ inputs.is_months }} \
+            --adaptive-style ${{ inputs.adaptive_style }} \
+            --hold-min ${{ inputs.hold_min }} --hold-rank ${{ inputs.hold_rank }} \
+            --cost-bps ${{ inputs.cost_bps }} \
+            --pit-file pit/pit_membership.csv.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pvpit-result
+          path: out/pv_*.json
+          if-no-files-found: error

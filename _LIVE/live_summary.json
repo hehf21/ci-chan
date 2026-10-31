@@ -1,0 +1,24 @@
+{
+ "as_of": "2026-10",
+ "capital": 500000.0,
+ "top": 50,
+ "signs": {
+  "f_mom60": -1,
+  "f_mom20": -1,
+  "f_rev5": -1,
+  "f_vol20": -1,
+  "f_turn20": -1,
+  "f_amt20": -1
+ },
+ "adaptive_style_months": 3,
+ "style_recent_spread": -0.153395,
+ "hold_rule_on": false,
+ "hold_min": 3,
+ "hold_rank": 100,
+ "universe": 4362,
+ "buy": 50,
+ "keep": 0,
+ "sell": 0,
+ "not_executable": 8,
+ "total_amount": 353312.0
+}
