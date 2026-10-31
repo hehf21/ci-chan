@@ -87,7 +87,8 @@ def _spearman(a, b) -> float:
         return float("nan")
 
 def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
-                     sign_mode: str = "prior", is_months: int = 36) -> dict:
+                     sign_mode: str = "prior", is_months: int = 36,
+                     cost_bps: float = 0.0) -> dict:
     """月末调仓回测。
 
     sign_mode:
@@ -159,10 +160,15 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
             z = last_z[f][cur].reindex(base).fillna(0.0) * signs[f]
             score = z if score is None else score + z
         sel = score.nlargest(min(top, len(score))).index
-        rets.append(float(fwd[sel].mean()))
+        # 换手成本：按与上期持仓的重叠度估算（近似：全换时扣 cost_bps）
+        prev = set(picks[-1]["picks"]) if picks and "all_picks" in picks[-1] else set()
+        turnover = 1.0 if not prev else (1 - len(prev & set(sel)) / max(1, len(sel)))
+        cost = (cost_bps / 10000.0) * turnover
+        rets.append(float(fwd[sel].mean()) - cost)
         bench.append(float(fwd.mean()))
         picks.append({"month": str(cur), "ret": round(rets[-1] * 100, 2),
-                      "bench": round(bench[-1] * 100, 2), "picks": list(sel[:8])})
+                      "bench": round(bench[-1] * 100, 2),
+                      "picks": list(sel[:8]), "all_picks": list(sel)})
 
     eq = np.cumprod([1 + x for x in rets])
     bq = np.cumprod([1 + x for x in bench])
@@ -186,6 +192,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
         "months_total": len(month_rows),
         "top": top,
         "sign_mode": sign_mode,
+        "cost_bps": cost_bps,
         "signs": signs,
         "ret": round(float(eq[-1] - 1) * 100, 2),
         "bench": round(float(bq[-1] - 1) * 100, 2),
@@ -208,7 +215,18 @@ def main() -> int:
     ap.add_argument("--sign-mode", default="ic", choices=["prior", "ic"],
                     help="因子方向：prior=先验 / ic=用前若干月 IC 定符号并做样本外")
     ap.add_argument("--is-months", type=int, default=36, help="定符号用的样本内月数")
+    ap.add_argument("--factors", default="",
+                    help="只用这些因子，逗号分隔（空=全部）。例：f_mom60,f_mom20,f_rev5")
+    ap.add_argument("--cost-bps", type=float, default=0.0,
+                    help="每月调仓双边成本（基点，15=0.15%%）")
     a = ap.parse_args()
+
+    if a.factors.strip():
+        keep = {k.strip() for k in a.factors.split(",") if k.strip()}
+        for k in list(FACTORS):
+            if k not in keep:
+                FACTORS.pop(k)
+        print(f"只用因子：{sorted(FACTORS)}")
 
     p = load_panel()
     print(f"面板：{len(p)} 行，{p['code'].nunique() if len(p) else 0} 只票")
@@ -216,7 +234,8 @@ def main() -> int:
         raise SystemExit("没有 pv_parts 数据")
 
     res = monthly_backtest(p, a.top, a.bt_start, a.end,
-                           sign_mode=a.sign_mode, is_months=a.is_months)
+                           sign_mode=a.sign_mode, is_months=a.is_months,
+                           cost_bps=a.cost_bps)
     print(json.dumps(res, ensure_ascii=False, indent=1))
 
     os.makedirs(os.path.join(HERE, "out"), exist_ok=True)
