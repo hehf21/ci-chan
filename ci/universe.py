@@ -14,7 +14,7 @@ import contextlib
 import io
 
 
-def all_codes(limit: int = 0) -> list[str]:
+def all_codes(limit: int = 0, seed: int = 20261030) -> list[str]:
     """全部 A 股代码（剔除 ST、退市、B 股、场内基金）。
 
     只用 query_all_stock 一次请求：它自带 tradeStatus（1=正常交易）和名称，
@@ -55,7 +55,7 @@ def all_codes(limit: int = 0) -> list[str]:
         # 按代码顺序取前 N 只会拿到一堆深市老票（000001~0000xx），样本有偏。
         # 用固定种子随机抽样，保证可复现且覆盖全市场。
         import random as _random
-        return sorted(_random.Random(20261030).sample(codes, limit))
+        return sorted(_random.Random(int(seed)).sample(codes, limit))
     return codes
 
 
@@ -82,9 +82,10 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=100, help="取前多少只（0=不限）")
     ap.add_argument("--all", action="store_true", help="全 A 股（剔除 ST/退市/B股/场内基金）")
+    ap.add_argument("--seed", type=int, default=20261030, help="随机抽样种子（换种子=换股票池）")
     a = ap.parse_args()
     if a.all:
-        codes = all_codes(a.n)
+        codes = all_codes(a.n, seed=a.seed)
     else:
         codes = hs300_codes(a.n)
     print(",".join(codes))

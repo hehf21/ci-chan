@@ -11,6 +11,11 @@ on:
         required: false
         default: "300"
         type: string
+      seed:
+        description: "随机抽样种子（换种子=换股票池，用于复现性检验）"
+        required: false
+        default: "20261030"
+        type: string
       top:
         description: "每月买入前多少只"
         required: false
@@ -69,7 +74,7 @@ jobs:
       - id: m
         run: |
           set -e
-          CODES=$(python ci/universe.py --all --n ${{ inputs.n }})
+          CODES=$(python ci/universe.py --all --n ${{ inputs.n }} --seed ${{ inputs.seed }})
           echo "count=$(echo "$CODES" | tr ',' '\n' | wc -l)"
           echo "matrix=$(python3 -c "import json,sys;print(json.dumps([c for c in sys.argv[1].split(',') if c]))" "$CODES")" >> "$GITHUB_OUTPUT"
 
