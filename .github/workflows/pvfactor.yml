@@ -36,6 +36,16 @@ on:
         required: false
         default: "36"
         type: string
+      factors:
+        description: "只用这些因子（空=全部），如 f_mom60,f_mom20,f_rev5"
+        required: false
+        default: ""
+        type: string
+      cost_bps:
+        description: "每月调仓双边成本（基点，15=0.15%）"
+        required: false
+        default: "15"
+        type: string
       bt_start:
         description: "回测起点"
         required: false
@@ -106,7 +116,8 @@ jobs:
       - name: 截面回测
         run: |
           python ci/pv_merge.py --top ${{ inputs.top }} --bt-start ${{ inputs.bt_start }} \
-            --end ${{ inputs.end }} --sign-mode ${{ inputs.sign_mode }} --is-months ${{ inputs.is_months }}
+            --end ${{ inputs.end }} --sign-mode ${{ inputs.sign_mode }} --is-months ${{ inputs.is_months }} \
+            --factors "${{ inputs.factors }}" --cost-bps ${{ inputs.cost_bps }}
       - uses: actions/upload-artifact@v4
         with:
           name: pv-result
