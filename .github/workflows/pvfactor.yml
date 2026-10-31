@@ -56,6 +56,11 @@ on:
         required: false
         default: "0"
         type: string
+      struct_mode:
+        description: "结构判定口径：proxy=近N日最低 / chan=真缠论日线"
+        required: false
+        default: "proxy"
+        type: string
       struct_gate:
         description: "换手抑制：未跌破近 N 日最低则保留（0=不用）"
         required: false
@@ -128,10 +133,19 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt baostock
+      - name: 缠论日线结构（${{ matrix.code }}）
+        run: |
+          python ci/chan_state.py --code ${{ matrix.code }} --start 2006-01-01 \
+            --end ${{ inputs.end }} --outdir chan_parts || true
       - name: 因子（${{ matrix.code }}）
         run: |
           python ci/pv_one.py --code ${{ matrix.code }} --start ${{ inputs.start }} \
             --end ${{ inputs.end }} --outdir pv_parts || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chan-${{ matrix.code }}
+          path: chan_parts/${{ matrix.code }}.csv
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
         with:
           name: pv-${{ matrix.code }}
@@ -150,6 +164,11 @@ jobs:
       - run: pip install -r requirements.txt baostock
       - uses: actions/download-artifact@v4
         with:
+          pattern: chan-*
+          merge-multiple: true
+          path: chan_parts
+      - uses: actions/download-artifact@v4
+        with:
           pattern: pv-*
           merge-multiple: true
           path: pv_parts
@@ -162,6 +181,7 @@ jobs:
             --timing ${{ inputs.timing }} --timing-win ${{ inputs.timing_win }} \
             --capital ${{ inputs.capital }} \
             --hold-min ${{ inputs.hold_min }} --hold-rank ${{ inputs.hold_rank }} \
+            --struct-mode ${{ inputs.struct_mode }} \
             --struct-gate ${{ inputs.struct_gate }}
       - uses: actions/upload-artifact@v4
         with:

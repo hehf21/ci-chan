@@ -89,13 +89,40 @@ def _spearman(a, b) -> float:
     except Exception:
         return float("nan")
 
+
+
+def load_chan_broke() -> pd.DataFrame | None:
+    """读 chan_parts/*.csv → code × 月 的结构走坏矩阵（1=走坏）。"""
+    import glob as _glob
+    files = _glob.glob(os.path.join(HERE, "chan_parts", "*.csv"))
+    if not files:
+        return None
+    frames = []
+    for f in files:
+        try:
+            d = pd.read_csv(f, dtype={"code": str})
+        except Exception:
+            continue
+        if len(d) and "broke_zs" in d.columns:
+            frames.append(d[["code", "date", "broke_zs"]])
+    if not frames:
+        return None
+    df = pd.concat(frames, ignore_index=True)
+    df["code"] = df["code"].astype(str).str.zfill(6)
+    df["date"] = pd.to_datetime(df["date"])
+    df["ym"] = df["date"].dt.to_period("M")
+    mat = df.groupby(["code", "ym"])["broke_zs"].last().unstack("ym")
+    print(f"[缠论结构] 载入 {len(frames)} 只票，{mat.shape[1]} 个月")
+    return mat
+
 def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                      sign_mode: str = "prior", is_months: int = 36,
                      cost_bps: float = 0.0, neutralize: str = "",
                      timing: str = "none", timing_win: int = 3,
                      capital: float = 0.0,
                      hold_min: int = 0, hold_rank: int = 0,
-                     struct_gate: int = 0) -> dict:
+                     struct_gate: int = 0, struct_mode: str = "proxy",
+                     chan_mat = None) -> dict:
     """月末调仓回测。
 
     sign_mode:
@@ -206,8 +233,15 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                 # 条件2：排名仍在前 M 名
                 if ok and hold_rank:
                     ok = (c in _ranked.index and int(_ranked.index.get_loc(c)) + 1 <= hold_rank)
-                # 条件3：结构没坏（收盘未跌破近 N 日最低）
-                if ok and struct_gate and last_low is not None:
+                # 条件3a：真缠论结构（日线中枢下沿/卖点）未走坏
+                if ok and struct_mode == "chan" and chan_mat is not None:
+                    try:
+                        _v = chan_mat.loc[c, cc_map[str(cur)]]
+                        ok = int(float(_v)) == 0
+                    except Exception:
+                        ok = True        # 查不到就按未坏处理（保守保留）
+                # 条件3b：代理口径（收盘未跌破近 N 日最低）
+                if ok and struct_mode == "proxy" and struct_gate and last_low is not None:
                     try:
                         _col = cc_map[str(cur)]
                         low = float(last_low[_col].get(c, float("nan")))
@@ -352,6 +386,8 @@ def main() -> int:
                     help="换手抑制：持有满 N 个月才允许因排名掉出而卖出（0=关）")
     ap.add_argument("--hold-rank", type=int, default=0,
                     help="换手抑制：排名仍在前 M 名则保留（0=不用该条）")
+    ap.add_argument("--struct-mode", default="proxy", choices=["proxy", "chan"],
+                    help="结构判定：proxy=近N日最低 / chan=真缠论日线结构（需 chan_parts）")
     ap.add_argument("--struct-gate", type=int, default=0,
                     help="换手抑制：收盘未跌破近 N 日最低（次级别低点未破=结构没坏）则保留（0=关）")
     ap.add_argument("--capital", type=float, default=0.0,
@@ -384,7 +420,8 @@ def main() -> int:
                            timing=a.timing, timing_win=a.timing_win,
                            capital=a.capital,
                            hold_min=a.hold_min, hold_rank=a.hold_rank,
-                           struct_gate=a.struct_gate)
+                           struct_gate=a.struct_gate, struct_mode=a.struct_mode,
+                           chan_mat=(load_chan_broke() if a.struct_mode == "chan" else None))
     print(json.dumps(res, ensure_ascii=False, indent=1))
 
     os.makedirs(os.path.join(HERE, "out"), exist_ok=True)
