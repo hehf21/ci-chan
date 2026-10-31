@@ -238,7 +238,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                 if r_:
                     trades.append(r_)
             prev = set(sel)
-            equity *= (1 + ret_ / 100.0)
+            equity *= (1 + ret_)          # rets 存的是小数收益，不是百分数
 
     eq = np.cumprod([1 + x for x in rets])
     bq = np.cumprod([1 + x for x in bench])
