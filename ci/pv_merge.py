@@ -122,7 +122,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                      capital: float = 0.0,
                      hold_min: int = 0, hold_rank: int = 0,
                      struct_gate: int = 0, struct_mode: str = "proxy",
-                     chan_mat = None) -> dict:
+                     chan_mat = None, adaptive_style: int = 0) -> dict:
     """月末调仓回测。
 
     sign_mode:
@@ -210,6 +210,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
     cash_months = 0
     prev_hold: set = set()
     held_months: dict = {}
+    style_hist: list = []
     cc_map = {str(cc): cc for cc in last_px.columns}
     for r in trade_rows:
         cur, base, fwd = r["ym"], r["base"], r["fwd"]
@@ -221,7 +222,11 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
         sel = list(_ranked.nlargest(min(top, len(score))).index)
 
         # ---- 换手抑制：掉出名单的持仓，满足条件就不卖 ----
-        if (hold_min or hold_rank or struct_gate) and prev_hold:
+        _apply_rule = True
+        if adaptive_style and adaptive_style > 0:
+            _h2 = style_hist[:-1][-adaptive_style:]
+            _apply_rule = bool(_h2) and (sum(_h2) / len(_h2) > 0)
+        if _apply_rule and (hold_min or hold_rank or struct_gate or struct_mode == "chan") and prev_hold:
             keep = []
             for c in prev_hold:
                 if c in sel:
@@ -256,6 +261,25 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
                     sel.append(c)
 
         # 换手成本：按与上期持仓的重叠度估算
+        # 因子多空价差：按总分十分位，头组与尾组的当月收益差（用于风格状态判别）
+        _q = score.reindex(base).dropna()
+        if len(_q) >= 20:
+            _n = max(1, len(_q) // 10)
+            _top = _q.nlargest(_n).index
+            _bot = _q.nsmallest(_n).index
+            style_spread = float(fwd[_top].mean() - fwd[_bot].mean())
+        else:
+            style_spread = 0.0
+        style_hist.append(style_spread)
+
+        # ---- 风格自适应：只有因子近期有效（多空价差为正）才启用换手抑制 ----
+        _rule_on = True
+        if adaptive_style and adaptive_style > 0:
+            _h = style_hist[:-1][-adaptive_style:]        # 只用当月之前的数据
+            _rule_on = bool(_h) and (sum(_h) / len(_h) > 0)
+        if not _rule_on:
+            sel = list(_ranked.nlargest(min(top, len(score))).index)
+
         prev_set = set(picks[-1]["_sel"]) if (picks and "_sel" in picks[-1]) else set()
         turnover = 1.0 if not prev_set else (1 - len(prev_set & set(sel)) / max(1, len(sel)))
         cost = (cost_bps / 10000.0) * turnover
@@ -353,6 +377,7 @@ def monthly_backtest(p: pd.DataFrame, top: int, d0: str, d1: str,
         "top": top,
         "sign_mode": sign_mode,
         "cost_bps": cost_bps,
+        "adaptive_style": adaptive_style,
         "neutralize": neutralize,
         "timing": timing,
         "timing_win": timing_win,
@@ -386,6 +411,8 @@ def main() -> int:
                     help="换手抑制：持有满 N 个月才允许因排名掉出而卖出（0=关）")
     ap.add_argument("--hold-rank", type=int, default=0,
                     help="换手抑制：排名仍在前 M 名则保留（0=不用该条）")
+    ap.add_argument("--adaptive-style", type=int, default=0,
+                    help="风格自适应：用过去 N 个月因子多空价差判断结构市；>0 才启用换手抑制（0=关）")
     ap.add_argument("--struct-mode", default="proxy", choices=["proxy", "chan"],
                     help="结构判定：proxy=近N日最低 / chan=真缠论日线结构（需 chan_parts）")
     ap.add_argument("--struct-gate", type=int, default=0,
@@ -421,6 +448,7 @@ def main() -> int:
                            capital=a.capital,
                            hold_min=a.hold_min, hold_rank=a.hold_rank,
                            struct_gate=a.struct_gate, struct_mode=a.struct_mode,
+                           adaptive_style=a.adaptive_style,
                            chan_mat=(load_chan_broke() if a.struct_mode == "chan" else None))
     print(json.dumps(res, ensure_ascii=False, indent=1))
 

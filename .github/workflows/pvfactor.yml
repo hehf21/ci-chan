@@ -56,6 +56,11 @@ on:
         required: false
         default: "0"
         type: string
+      adaptive_style:
+        description: "风格自适应：过去 N 个月因子多空价差为正才启用换手抑制（0=关）"
+        required: false
+        default: "0"
+        type: string
       struct_mode:
         description: "结构判定口径：proxy=近N日最低 / chan=真缠论日线"
         required: false
@@ -182,6 +187,7 @@ jobs:
             --capital ${{ inputs.capital }} \
             --hold-min ${{ inputs.hold_min }} --hold-rank ${{ inputs.hold_rank }} \
             --struct-mode ${{ inputs.struct_mode }} \
+            --adaptive-style ${{ inputs.adaptive_style }} \
             --struct-gate ${{ inputs.struct_gate }}
       - uses: actions/upload-artifact@v4
         with:
